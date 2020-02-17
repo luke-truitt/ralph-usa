@@ -5,7 +5,7 @@ import os
 print("hello world")
 
 here = os.path.abspath(os.path.dirname(__file__))
-data_directory = os.path.join(here, 'data\equities\AAPL.csv')
+data_directory = os.path.join(here, 'data\equities\AAPL.xlsx')
 
 print(here)
 print(data_directory)

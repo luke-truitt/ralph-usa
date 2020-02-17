@@ -33,7 +33,7 @@ class Equity:
             data_file {String} -- [Path to the data file that contains 
             the equity information]
         """
-        self.data = pd.read_csv(data_file)
+        self.data = pd.read_excel(data_file)
 
         dataFile_len = len(data_file)
         i = dataFile_len - 5
@@ -43,7 +43,7 @@ class Equity:
             if data_file[i] == '\\':
                 break
             i=i-1
-        ticker = data_file[i+1:dataFile_len-4]
+        ticker = data_file[i+1:dataFile_len-5]
         print(ticker)
         volumeCol = ticker + ' US Equity - Volume'
         print(volumeCol) 
@@ -67,6 +67,7 @@ class Equity:
             self.lows = self.data['Low Price'].ffill().values  # fills values if not NaN
             
         if volumeCol in self.data.columns:
+            print('creating volumes')
             self.data[volumeCol].astype(dtype=float) #Error if casted as an int
             self.volumes = self.data[volumeCol].ffill().values 
 
