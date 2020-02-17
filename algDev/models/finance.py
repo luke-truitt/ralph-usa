@@ -20,7 +20,15 @@ class Finance:
     def pChange(p1, p2):
         return (p2-p1)/p1
 
-    #Calculate the percent change each day between p1 and p2
+    """
+    Calculate the percent change each day between p1 and p2
+    There are two cases:
+    1) If start and stop are the same value, then it calculates the pChange from one day to the next of that value
+    2) If start and stop are the same value, then it calculates the pChange of that value in that day
+
+    There are 4 potential inputs for start and stop: 'O', 'C', 'H', 'L'
+    days refers to how back you would like to go
+    """
     #TESTING
     @staticmethod
     def dailyChanges(eq, days = 500, start = 'O', stop = 'C'):
@@ -34,11 +42,19 @@ class Finance:
         #If IPO date happened < days days ago
         if days > len(p1):
             days = len(p1)
+
+        if(start == stop):
+            daily_returns = [0] * (days-1)
+
+            for i in range(0, days - 2):
+                daily_returns[i] = Finance.pChange(p1[i+1],p2[i])
+
         
-        daily_returns = [0] * (days)
+        else:
+            daily_returns = [0] * (days)
         
-        for i in range(0,days-1): 
-            daily_returns[i] = Finance.pChange(p1[i],p2[i])
+            for i in range(0,days-1): 
+                daily_returns[i] = Finance.pChange(p1[i],p2[i])
         
         return daily_returns
 

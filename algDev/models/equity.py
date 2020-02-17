@@ -38,8 +38,6 @@ class Equity:
         dataFile_len = len(data_file)
         i = dataFile_len - 5
         while True:
-            print('looping')
-            print(i)
             if data_file[i] == '\\':
                 break
             i=i-1
@@ -47,8 +45,6 @@ class Equity:
         print(ticker)
         volumeCol = ticker + ' US Equity - Volume'
         print(volumeCol) 
-
-        # /AAPL.csv
         
         if 'Last Price' in self.data.columns:
             self.data['Last Price'].astype(dtype=float)
@@ -67,7 +63,6 @@ class Equity:
             self.lows = self.data['Low Price'].ffill().values  # fills values if not NaN
             
         if volumeCol in self.data.columns:
-            print('creating volumes')
             self.data[volumeCol].astype(dtype=float) #Error if casted as an int
             self.volumes = self.data[volumeCol].ffill().values 
 
