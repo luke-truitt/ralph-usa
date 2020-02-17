@@ -34,26 +34,41 @@ class Equity:
             the equity information]
         """
         self.data = pd.read_csv(data_file)
+
+        dataFile_len = len(data_file)
+        i = dataFile_len - 5
+        while True:
+            print('looping')
+            print(i)
+            if data_file[i] == '\\':
+                break
+            i=i-1
+        ticker = data_file[i+1:dataFile_len-4]
+        print(ticker)
+        volumeCol = ticker + ' US Equity - Volume'
+        print(volumeCol) 
+
+        # /AAPL.csv
         
-        if 'Close' in self.data.columns:
-            self.data['Close'].astype(dtype=float)
-            self.closes = self.data['Close'].ffill().values  # fills values if not NaN
+        if 'Last Price' in self.data.columns:
+            self.data['Last Price'].astype(dtype=float)
+            self.closes = self.data['Last Price'].ffill().values  # fills values if not NaN
         
-        if 'Open' in self.data.columns:
-            self.data['Open'].astype(dtype=float)
-            self.opens = self.data['Open'].ffill().values  # fills values if not NaN
+        if 'Open Price' in self.data.columns:
+            self.data['Open Price'].astype(dtype=float)
+            self.opens = self.data['Open Price'].ffill().values  # fills values if not NaN
         
-        if 'High' in self.data.columns:
-            self.data['High'].astype(dtype=float)
-            self.highs = self.data['High'].ffill().values  # fills values if not NaN
+        if 'High Price' in self.data.columns:
+            self.data['High Price'].astype(dtype=float)
+            self.highs = self.data['High Price'].ffill().values  # fills values if not NaN
         
-        if 'Low' in self.data.columns:
-            self.data['Low'].astype(dtype=float)
-            self.lows = self.data['Low'].ffill().values  # fills values if not NaN
+        if 'Low Price' in self.data.columns:
+            self.data['Low Price'].astype(dtype=float)
+            self.lows = self.data['Low Price'].ffill().values  # fills values if not NaN
             
-        if 'Volume' in self.data.columns:
-            self.data['Volume'].astype(dtype=int)
-            self.volumes = self.data['Volume'].ffill().values
+        if volumeCol in self.data.columns:
+            self.data[volumeCol].astype(dtype=float) #Error if casted as an int
+            self.volumes = self.data[volumeCol].ffill().values 
 
         if 'Date' in self.data.columns:
             self.data['Date'].astype(dtype=str)
