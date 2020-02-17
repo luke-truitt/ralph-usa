@@ -28,18 +28,18 @@ print(testEquity1.data)
 print('Mean Tests')
 print(Finance.mean(testEquity1, start = 'O', stop = 'C'))
 print(Finance.mean(testEquity1, start = 'O', stop = 'O'))
-# print(Finance.mean(testEquity2))
+print(Finance.mean(testEquity2))
 
 print('Variance Tests')
 print(Finance.variance(testEquity1, start = 'O', stop = 'O'))
-# print(Finance.variance(testEquity2))
+print(Finance.variance(testEquity2))
 
 print('Covariance Tests')
 print(Finance.covariance(testEquity1,testEquity2, start = 'O', stop = 'O'))
-# print(Finance.covariance(testEquity1,testEquity2))
+print(Finance.covariance(testEquity1,testEquity2))
 
 print('Correlation Tests')
 print(Finance.correlation(testEquity1, testEquity2, start = 'O', stop = 'O'))
-# print(Finance.correlation(testEquity2, testEquity1))
-# print(Finance.correlation(testEquity1, testEquity1))
+print(Finance.correlation(testEquity2, testEquity1))
+print(Finance.correlation(testEquity1, testEquity1))
 

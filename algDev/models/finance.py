@@ -66,7 +66,7 @@ class Finance:
     #DONE
     @staticmethod
     def variance(eq, days = 500, start = 'O', stop = 'C'):
-        return stat.variance(Finance.dailyChanges(eq,days, start, stop))
+        return stat.pvariance(Finance.dailyChanges(eq,days, start, stop))
 
     #DONE
     @staticmethod
