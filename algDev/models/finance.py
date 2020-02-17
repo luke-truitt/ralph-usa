@@ -3,8 +3,6 @@ import math
 import numpy as np
 import statistics as stat 
 
-
-
 class Finance:
 
     """
@@ -16,26 +14,76 @@ class Finance:
     def __init__(self):
         pass
     
+    #Calculate the percent change between any two numbers
+    #DONE
     @staticmethod
-    def mean(eq, days = 500):
-        pass
+    def pChange(p1, p2):
+        return (p2-p1)/p1
 
+    #Calculate the percent change each day between p1 and p2
+    #TESTING
     @staticmethod
-    def variance(eq, days = 500):
-        pass
-        return 0
+    def dailyChanges(eq, days = 500, start = 'O', stop = 'C'):
+        
+        #Switch Case
+        switcher = {'O':eq.opens, 'C':eq.closes, 'H':eq.highs, 'L':eq.lows}
 
-    @staticmethod
-    def covariance(eq1, eq2, days = 500):
-        pass
+        p1 = switcher.get(start, 0)
+        p2 = switcher.get(stop, 0)
 
+        #If IPO date happened < days days ago
+        if days > len(p1):
+            days = len(p1)
+        
+        daily_returns = [0] * (days)
+        
+        for i in range(0,days-1): 
+            daily_returns[i] = Finance.pChange(p1[i],p2[i])
+        
+        return daily_returns
+
+    #DONE
     @staticmethod
-    def stddev(eq, days = 500):
-        return math.sqrt(Finance.variance(eq, days))
+    def mean(eq, days = 500, start = 'O', stop = 'C'):
+        return stat.mean(Finance.dailyChanges(eq, days, start, stop))
+
+    #DONE
+    @staticmethod
+    def variance(eq, days = 500, start = 'O', stop = 'C'):
+        return stat.variance(Finance.dailyChanges(eq,days, start, stop))
+
+    #DONE
+    @staticmethod
+    def covariance(eq1, eq2, days = 500, start = 'O', stop = 'C'):
+        pass
+        DCeq1 = Finance.dailyChanges(eq1, days, start, stop)
+        DCeq2 = Finance.dailyChanges(eq2, days, start, stop)
+
+        #If one security IPO in the last days days, then adjust so lists are same length
+        if(len(DCeq1) != len(DCeq2)):
+            if(len(DCeq1)>len(DCeq2)):
+                DCeq1 = DCeq1[0:len(DCeq2)-1]
+            else:
+                DCeq2 = DCeq2[0:len(DCeq1)-1]
+        
+        return np.cov(DCeq1, DCeq2)[0,1]
+
+    #DONE
+    @staticmethod
+    def stddev(eq, days = 500, start = 'O', stop = 'C'):
+        return math.sqrt(Finance.variance(eq, days, start, stop))
     
+    #DONE
     @staticmethod
-    def correlation(eq1, eq2, days = 500):
+    def correlation(eq1, eq2, days = 500, start = 'O', stop = 'C'):
         pass
+        cov = Finance.covariance(eq1, eq2, days, start, stop)
+        std1 = Finance.stddev(eq1, days, start, stop)
+        std2 = Finance.stddev(eq2, days, start, stop)
+
+        return cov/(std1*std2)
+
+    
 
     
 
