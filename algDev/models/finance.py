@@ -99,9 +99,14 @@ class Finance:
 
         return cov/(std1*std2)
 
-    
+    @staticmethod
+    def portVar(eqs, weights, days = 500, start = 'O', stop = 'C'):
+        if(len(eqs) != len(weights)):
+            print('Length of lists do not match')
+            return null
+        
+        var = 0
+        for i in range(0,len(eqs)-1):
+            var = var + (weights[i]^2)*(Finance.variance(eqs[i],days, start, stop))
 
-    
-
-
-     
+        return var
