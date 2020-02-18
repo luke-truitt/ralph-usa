@@ -6,7 +6,7 @@ class Portfolio:
         self.positions = []
         self.value = value
 
-    def realloc(self, date)
+    def realloc(self, date):
 
         predictions = np.zeros((len(self.positions), 10))
 
