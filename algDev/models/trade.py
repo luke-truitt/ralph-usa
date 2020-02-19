@@ -11,14 +11,12 @@ class Trade:
 
     def __init__(self, num_shares, share_price, date):
         self.num_shares = num_shares
-        self.share_price = share_price
         self.date = date
-        self.trade_value = num_shares * share_price
 
-        if(num_shares > 0):
-            self.trade_type = 'sell or short'
-        
+    def get_type(self):
+        if self.num_shares > 0:
+            return 'buy'
         else:
-            self.trade_type = 'buy'
+            return 'sell or short'
 
     

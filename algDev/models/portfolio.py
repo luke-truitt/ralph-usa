@@ -2,10 +2,13 @@ import numpy as np
 
 class Portfolio:
     
-    def __init__(self, value):
+    def __init__(self, value, eqs):
         self.positions = []
         self.total_value = value
         self.allocated_resources = 0
+
+        for i in range(0, len(eqs) - 1):
+            pass
 
 
     def realloc(self, date):
@@ -56,7 +59,7 @@ class Portfolio:
 
         return ev
 
-    #TESTING
+    #CHANGE WEIGHT TO WEIGHT METHOD
     def variance(self, days = 500, start = 'O', stop = 'C'):
         var = 0
         for i in range(0,len(positions)-1):

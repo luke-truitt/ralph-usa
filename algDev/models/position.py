@@ -5,11 +5,10 @@ class Position:
     def __init__(self, eq): # num_shares, share_price):
         self.eq = eq
         self.num_shares = 0
-        self.weight = 0
         self.trades = []
 
     def trade_shares(self, num_shares, share_price, date):
-        tr = Trade(num_shares, share_price)
+        tr = Trade(num_shares, share_price, date)
         self.trades.insert(tr)
         self.num_shares = self.num_shares + num_shares
 
@@ -24,9 +23,17 @@ class Position:
     # def sell_shares(self, num_shares):
     #     return self.trade(-1 * num_shares)
 
-    #CHANGE
-    def value(self):
-        return self.share_price * self.num_shares
+    #DONE
+    def get_price(self, date, type = 'O'):
+
+        switcher = {'O':self.eq.opens, 'C':self.eq.closes, 'H':self.eq.highs, 'L':self.eq.lows}
+        price_type = switcher.get(type, 0)
+
+        return self.eq[self.eq.getIndexFromDate(date)]
+
+    #DONE
+    def value(self, date, type = 'O'):
+        return self.get_price(date) * self.num_shares
 
     #DONE
     def is_short(self):
