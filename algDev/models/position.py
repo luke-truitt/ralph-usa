@@ -5,15 +5,13 @@ class Position:
     def __init__(self, eq): # num_shares, share_price):
         self.eq = eq
         self.num_shares = 0
-        self.share_price = eq.closes[0]
         self.weight = 0
-        self.trades = {}
+        self.trades = []
 
     def trade_shares(self, num_shares, share_price, date):
         tr = Trade(num_shares, share_price)
-        self.trades[date] = tr
+        self.trades.insert(tr)
         self.num_shares = self.num_shares + num_shares
-        self.share_price = share_price
 
     # def trade_value(self, amt, date):
     #     num_shares = int(amt/self.share_price)
@@ -26,7 +24,7 @@ class Position:
     # def sell_shares(self, num_shares):
     #     return self.trade(-1 * num_shares)
 
-    #DONE
+    #CHANGE
     def value(self):
         return self.share_price * self.num_shares
 

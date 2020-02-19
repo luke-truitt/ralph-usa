@@ -2,7 +2,7 @@ import pandas as pd
 import math
 import numpy as np
 import statistics as stat 
-from portfolio import Portfolio
+#from portfolio import Portfolio
 
 class Finance:
 
@@ -99,13 +99,3 @@ class Finance:
         std2 = Finance.stddev(eq2, days, start, stop)
 
         return cov/(std1*std2)
-
-    #IN PROGRESS
-    @staticmethod
-    def portfolio_equity_covariance(eq, port, days = 500, start = 'O', stop = 'C'):
-        port_variance = port.variance()
-        eq_variance = Finance.variance(eq, days, start, stop)
-        
-        
-
-        return covar

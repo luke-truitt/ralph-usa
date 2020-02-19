@@ -9,9 +9,10 @@ Instance of this class has 4 variables
 
 class Trade:
 
-    def __init__(self, num_shares, share_price):
+    def __init__(self, num_shares, share_price, date):
         self.num_shares = num_shares
         self.share_price = share_price
+        self.date = date
         self.trade_value = num_shares * share_price
 
         if(num_shares > 0):

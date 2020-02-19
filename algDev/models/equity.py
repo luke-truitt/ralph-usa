@@ -2,7 +2,7 @@ import math
 import numpy as np
 import pandas as pd
 import datetime
-from models.indicators import Indicators
+#from indicators import Indicators
 
 class Equity: 
     """[Class that represents an asset by parsing the inputted data file.
