@@ -2,6 +2,7 @@ import pandas as pd
 import math
 import numpy as np
 import statistics as stat 
+from portfolio import Portfolio
 
 class Finance:
 
@@ -99,14 +100,12 @@ class Finance:
 
         return cov/(std1*std2)
 
+    #IN PROGRESS
     @staticmethod
-    def portVar(eqs, weights, days = 500, start = 'O', stop = 'C'):
-        if(len(eqs) != len(weights)):
-            print('Length of lists do not match')
-            return
-        
-        var = 0
-        for i in range(0,len(eqs)-1):
-            var = var + (weights[i]^2)*(Finance.variance(eqs[i],days, start, stop))
+    def portfolio_equity_covariance(eq, port, days = 500, start = 'O', stop = 'C'):
+        port_variance = port.variance()
+        eq_variance = Finance.variance(eq, days, start, stop)
 
-        return var
+        
+
+        return covar

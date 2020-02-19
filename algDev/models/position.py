@@ -1,10 +1,11 @@
 from models.trade import Trade
+from models.equity import Equity
 
 class Position:
-    def __init__(self, eq, num_shares, share_price):
+    def __init__(self, eq): # num_shares, share_price):
         self.eq = eq
-        self.num_shares = num_shares
-        self.share_price = share_price
+        self.num_shares = 0
+        self.share_price = eq.closes[0]
         self.weight = 0
         self.trades = {}
 
