@@ -54,3 +54,10 @@ class Portfolio:
 
         return ev
 
+    #NEEDS TO BE FINISHED
+    def variance(self):
+        var = 0
+        for i in range(0,len(eqs)-1):
+            var = var + (weights[i]^2)*(Finance.variance(eqs[i],days, start, stop))
+
+        return var
