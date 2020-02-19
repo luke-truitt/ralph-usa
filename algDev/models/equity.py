@@ -82,6 +82,15 @@ class Equity:
                 li = np.array(list(filter((0).__ne__, arr)))
                 self.closes[i] = np.sum(li)/len(li)
 
+    def getIndexFromDate(self, date):
+
+        if date == 'max':
+            return len(self.closes)
+
+        for i, d in enumerate(self.dates):
+            if d in date:
+               return i
+               
     def ohlc(self):
         """The average of the open low high close
         
