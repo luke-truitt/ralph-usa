@@ -1,12 +1,14 @@
 import numpy as np
 
 class Portfolio:
-
+    
     def __init__(self, value):
         self.positions = []
-        self.value = value
+        self.total_value = value
+        self.allocated_resources = 0
 
-    def realloc(self, date)
+
+    def realloc(self, date):
 
         predictions = np.zeros((len(self.positions), 10))
 
@@ -54,3 +56,10 @@ class Portfolio:
 
         return ev
 
+    #TESTING
+    def variance(self, days = 500, start = 'O', stop = 'C'):
+        var = 0
+        for i in range(0,len(positions)-1):
+            var = var + (positions[i].weight^2)*(Finance.variance(positions[i].eq,days, start, stop))
+
+        return var

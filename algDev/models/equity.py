@@ -2,8 +2,7 @@ import math
 import numpy as np
 import pandas as pd
 import datetime
-
-from models.indicators import Indicators
+#from indicators import Indicators
 
 class Equity: 
     """[Class that represents an asset by parsing the inputted data file.
@@ -33,22 +32,18 @@ class Equity:
             data_file {String} -- [Path to the data file that contains 
             the equity information]
         """
-        self.data = pd.read_csv(data_file)
+        self.data = pd.read_excel(data_file)
 
         dataFile_len = len(data_file)
         i = dataFile_len - 5
         while True:
-            print('looping')
-            print(i)
             if data_file[i] == '\\':
                 break
             i=i-1
-        ticker = data_file[i+1:dataFile_len-4]
+        ticker = data_file[i+1:dataFile_len-5]
         print(ticker)
         volumeCol = ticker + ' US Equity - Volume'
         print(volumeCol) 
-
-        # /AAPL.csv
         
         if 'Last Price' in self.data.columns:
             self.data['Last Price'].astype(dtype=float)
