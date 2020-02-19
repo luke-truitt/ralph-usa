@@ -33,7 +33,7 @@ class Position:
 
     #DONE
     def value(self, date, type = 'O'):
-        return self.get_price(date) * self.num_shares
+        return self.get_price(date, type) * self.num_shares
 
     #DONE
     def is_short(self):

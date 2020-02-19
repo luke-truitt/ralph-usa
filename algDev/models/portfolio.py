@@ -11,8 +11,15 @@ class Portfolio:
             new_pos = Position(eqs[i])
             self.positions.insert(new_pos)
 
+    def today(self):
+        today = self.positions[0].eq.dates[0]
+        return today
 
-    def realloc(self, date):
+    def getWeight(self, pos, date = self.today(), type = 'O'):
+        amt = pos.get_price(date, type) * pos.num_shares
+        return amt/allocated_resources
+
+    def realloc(self, date = self.today()):
 
         predictions = np.zeros((len(self.positions), 10))
 
@@ -60,10 +67,10 @@ class Portfolio:
 
         return ev
 
-    #CHANGE WEIGHT TO WEIGHT METHOD
-    def variance(self, days = 500, start = 'O', stop = 'C'):
+    #ISSUE WITH NEEDING DATES THROUGHOUT NOW
+    def variance(self, date = self.today(), days = 500, start = 'O', stop = 'C'):
         var = 0
         for i in range(0,len(positions)-1):
-            var = var + (positions[i].weight^2)*(Finance.variance(positions[i].eq,days, start, stop))
+            var = var + (positions[i].getWeight(date, start)^2)*(Finance.variance(positions[i].eq,days, start, stop))
 
         return var
