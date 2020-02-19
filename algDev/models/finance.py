@@ -105,7 +105,7 @@ class Finance:
     def portfolio_equity_covariance(eq, port, days = 500, start = 'O', stop = 'C'):
         port_variance = port.variance()
         eq_variance = Finance.variance(eq, days, start, stop)
-
+        
         
 
         return covar

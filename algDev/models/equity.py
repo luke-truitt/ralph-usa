@@ -2,7 +2,6 @@ import math
 import numpy as np
 import pandas as pd
 import datetime
-
 from models.indicators import Indicators
 
 class Equity: 
