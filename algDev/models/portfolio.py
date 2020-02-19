@@ -8,7 +8,8 @@ class Portfolio:
         self.allocated_resources = 0
 
         for i in range(0, len(eqs) - 1):
-            pass
+            new_pos = Position(eqs[i])
+            self.positions.insert(new_pos)
 
 
     def realloc(self, date):

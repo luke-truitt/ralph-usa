@@ -7,8 +7,8 @@ class Position:
         self.num_shares = 0
         self.trades = []
 
-    def trade_shares(self, num_shares, share_price, date):
-        tr = Trade(num_shares, share_price, date)
+    def trade_shares(self, num_shares, date):
+        tr = Trade(num_shares, date)
         self.trades.insert(tr)
         self.num_shares = self.num_shares + num_shares
 
@@ -29,7 +29,7 @@ class Position:
         switcher = {'O':self.eq.opens, 'C':self.eq.closes, 'H':self.eq.highs, 'L':self.eq.lows}
         price_type = switcher.get(type, 0)
 
-        return self.eq[self.eq.getIndexFromDate(date)]
+        return price_type[self.eq.getIndexFromDate(date)]
 
     #DONE
     def value(self, date, type = 'O'):
