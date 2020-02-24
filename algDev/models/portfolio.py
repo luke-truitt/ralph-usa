@@ -12,7 +12,7 @@ from models.position import Position
 def model_output(position, verbose=False):
 
     ## Game changing algorithm.
-    signal = 1 if random.random() > .5 else 0
+    signal = 1 if random.random() > .1 else 0
     alloc = random.random() / 10
 
     return signal, alloc
