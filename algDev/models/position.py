@@ -1,46 +1,86 @@
 from models.trade import Trade
-from models.equity import Equity
+import datetime
 
 class Position:
-    def __init__(self, eq): # num_shares, share_price):
+    def __init__(self, eq,verbose=False):
+        self.ticker = eq.ticker
         self.eq = eq
-        self.num_shares = 0
         self.trades = []
 
-    def trade_shares(self, num_shares, date):
-        tr = Trade(num_shares, date)
-        self.trades.insert(tr)
-        self.num_shares = self.num_shares + num_shares
-
-    # def trade_value(self, amt, date):
-    #     num_shares = int(amt/self.share_price)
-    #     self.trades[date] = num_shares
-    #     self.num_shares = self.num_shares + num_shares
+    def purchase(self, prediction, allocation, today,verbose=False):
+        if verbose:
+            print("Checking purchase:",prediction)
+        if prediction > 0:
+            if verbose:
+                print("Making purchase: ", allocation)
+            left_over = self.trade_value(allocation, today, verbose)
+            return allocation - left_over
+        return 0
         
-    # def buy_shares(self, num_shares):
-    #     return self.trade(num_shares)
+    def trade_shares(self, num_shares, date,verbose=False):
+        self.trades.append(Trade(date, num_shares))
 
-    # def sell_shares(self, num_shares):
-    #     return self.trade(-1 * num_shares)
+    def trade_value(self, amt, date,verbose=False):
+        day_open = self.eq.get_price(date, 'o')
+        num_shares = int(amt/day_open)
+        total_purchased = num_shares * day_open
+        left_over = amt - total_purchased
+        if verbose:
+            print("Buying ", num_shares, " at ", day_open)
+        self.trade_shares(num_shares, date)
+        return left_over
 
-    #DONE
-    def get_price(self, date, type = 'O'):
+    def buy_shares(self, num_shares,verbose=False):
+        return self.trade_shares(num_shares)
 
-        switcher = {'O':self.eq.opens, 'C':self.eq.closes, 'H':self.eq.highs, 'L':self.eq.lows}
-        price_type = switcher.get(type, 0)
+    def sell_shares(self, num_shares,verbose=False):
+        return self.trade_shares(-1 * num_shares)
 
-        return price_type[self.eq.getIndexFromDate(date)]
+    def value(self, date,verbose=False):
+        return self.eq.get_price(date, 'c', verbose) * self.get_shares(date)
 
-    #DONE
-    def value(self, date, type = 'O'):
-        return self.get_price(date, type) * self.num_shares
+    def is_short(self,verbose=False):
+        return self.size < 0
 
-    #DONE
-    def is_short(self):
-        return self.num_shares < 0
+    def has_position(self,verbose=False):
+        return self.size is not 0
 
-    #DONE
-    def has_position(self):
-        return self.num_shares is not 0
+    def get_shares(self, date, verbose=False):
+        total = 0
+        
+        for trade in self.trades:
+            if trade.date_sold > date and trade.date_purchased <= date:
+                total += trade.num_shares
 
-    
+        return total
+
+    def handle_closings(self, limit, exp, today, verbose=False):
+        cash = 0
+        if verbose:
+            print("Checking position for closings")
+        for i,trade in enumerate(self.trades):
+            if self.check_closed(trade, verbose):
+                continue
+            pur_date = trade.purchase_date()
+            days_since_pur = today - pur_date
+            if days_since_pur > datetime.timedelta(days=exp):
+                if verbose:
+                    print("Bought at: ", self.eq.get_price(pur_date, 'o'))
+                    print("Sold at: ", self.eq.get_price(today, 'c'))
+                cash += trade.num_shares * self.eq.get_price(today, 'c', verbose)
+                self.trades[i] = trade.sell(today, verbose)
+                continue
+            limit_price = self.eq.get_price(pur_date, 'o', verbose) * (1 + limit)
+            
+            if self.eq.get_price(today, 'h', verbose) >= limit_price:
+                if verbose:
+                    print("Bought at: ", self.eq.get_price(pur_date, 'o', verbose))
+                    print("Sold at: ", limit_price)
+                cash += trade.num_shares * limit_price
+                self.trades[i] = trade.sell(today, verbose)
+        if verbose:
+            print("Trades:",self.trades)
+        return cash
+
+    def check_closed(self, trade,verbose=False):
+        return trade.sold
