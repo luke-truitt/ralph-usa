@@ -94,6 +94,8 @@ class Equity:
             print(date)
         i = self.get_index_from_date(date)
         
+        type = type.lower()
+
         if type=='o':
             if verbose:
                 print("Getting Open", self.opens[i])
