@@ -34,6 +34,9 @@ class Finance:
     @staticmethod
     def dailyChanges(eq, days = 500, start = 'O', stop = 'C'):
         
+        start = start.upper()
+        stop = stop.upper()
+
         #Switch Case
         switcher = {'O':eq.opens, 'C':eq.closes, 'H':eq.highs, 'L':eq.lows}
 
@@ -62,17 +65,25 @@ class Finance:
     #DONE
     @staticmethod
     def mean(eq, days = 500, start = 'O', stop = 'C'):
+        start = start.upper()
+        stop = stop.upper()
+
         return stat.mean(Finance.dailyChanges(eq, days, start, stop))
 
     #DONE
     @staticmethod
     def variance(eq, days = 500, start = 'O', stop = 'C'):
+        start = start.upper()
+        stop = stop.upper()
+
         return stat.pvariance(Finance.dailyChanges(eq,days, start, stop))
 
     #DONE
     @staticmethod
     def covariance(eq1, eq2, days = 500, start = 'O', stop = 'C'):
-        pass
+        start = start.upper()
+        stop = stop.upper()
+
         DCeq1 = Finance.dailyChanges(eq1, days, start, stop)
         DCeq2 = Finance.dailyChanges(eq2, days, start, stop)
 
@@ -88,12 +99,17 @@ class Finance:
     #DONE
     @staticmethod
     def stddev(eq, days = 500, start = 'O', stop = 'C'):
+        start = start.upper()
+        stop = stop.upper()
+
         return math.sqrt(Finance.variance(eq, days, start, stop))
     
     #DONE
     @staticmethod
     def correlation(eq1, eq2, days = 500, start = 'O', stop = 'C'):
-        pass
+        start = start.upper()
+        stop = stop.upper()
+
         cov = Finance.covariance(eq1, eq2, days, start, stop)
         std1 = Finance.stddev(eq1, days, start, stop)
         std2 = Finance.stddev(eq2, days, start, stop)
