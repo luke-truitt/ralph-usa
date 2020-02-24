@@ -2,7 +2,8 @@ import math
 import numpy as np
 import pandas as pd
 import datetime
-#from indicators import Indicators
+
+from models.indicators import Indicators
 
 class Equity: 
     """[Class that represents an asset by parsing the inputted data file.
@@ -20,10 +21,10 @@ class Equity:
     Returns:
         {Equity}
     """
-    def __init__(self, data_file):
-        self.parse_data(data_file)
+    def __init__(self, data_file, verbose=False):
+        self.parse_data(data_file, verbose)
 
-    def parse_data(self, data_file):
+    def parse_data(self, data_file, verbose=False):
         """[Parses the incoming data into the appropriate fields. 
         There have been reported issues with the parsing on certain
         file types.]
@@ -33,60 +34,99 @@ class Equity:
             the equity information]
         """
         self.data = pd.read_excel(data_file)
-
+        
         dataFile_len = len(data_file)
         i = dataFile_len - 5
         while True:
-            if data_file[i] == '\\':
+            # if i < len(data_file
+            
+            if data_file[i] == r'/' or  data_file[i] == '\\':
                 break
             i=i-1
-        ticker = data_file[i+1:dataFile_len-5]
-        print(ticker)
-        volumeCol = ticker + ' US Equity - Volume'
-        print(volumeCol) 
+        self.ticker = data_file[i+1:dataFile_len-5]
+        
+        volumeCol = self.ticker + ' US Equity - Volume'
+        
         
         if 'Last Price' in self.data.columns:
             self.data['Last Price'].astype(dtype=float)
             self.closes = self.data['Last Price'].ffill().values  # fills values if not NaN
+            if self.ticker in 'RE OIL SNP':
+                self.closes = np.flip(self.closes)
         
         if 'Open Price' in self.data.columns:
             self.data['Open Price'].astype(dtype=float)
             self.opens = self.data['Open Price'].ffill().values  # fills values if not NaN
-        
+            if self.ticker in 'RE OIL SNP':
+                self.opens = np.flip(self.opens)
+
         if 'High Price' in self.data.columns:
             self.data['High Price'].astype(dtype=float)
             self.highs = self.data['High Price'].ffill().values  # fills values if not NaN
-        
+            if self.ticker in 'RE OIL SNP':
+                self.highs = np.flip(self.highs)
+
         if 'Low Price' in self.data.columns:
             self.data['Low Price'].astype(dtype=float)
             self.lows = self.data['Low Price'].ffill().values  # fills values if not NaN
-            
+            if self.ticker in 'RE OIL SNP':
+                self.lows = np.flip(self.lows)
+
         if volumeCol in self.data.columns:
             self.data[volumeCol].astype(dtype=float) #Error if casted as an int
             self.volumes = self.data[volumeCol].ffill().values 
+            if self.ticker in 'RE OIL SNP':
+                self.volums = np.flip(self.volumes)
 
         if 'Date' in self.data.columns:
             self.data['Date'].astype(dtype=str)
-            self.dates = self.data['Date'].values
+            self.dates = []
+            dates_temp = self.data['Date'].values
+            for i, date in enumerate(dates_temp):
+                d = self.conv_date(date)
+                self.dates.append(d)
 
-        for i in range(len(self.closes)):
-            ### Case for missing values
-            if(self.closes[i]==0):
-                # This line could end up fucking up, might not be worth fixing
-                arr = [c if c > 0 else 0 for c in self.closes[i-3:i+3]]
-                li = np.array(list(filter((0).__ne__, arr)))
-                self.closes[i] = np.sum(li)/len(li)
+            if self.ticker in 'RE OIL SNP':
+                self.dates = np.flip(self.dates)
+    
+    def get_price(self, date, type='c', verbose=False):
+        if verbose:
+            print(date)
+        i = self.get_index_from_date(date)
+        
+        if type=='o':
+            if verbose:
+                print("Getting Open", self.opens[i])
+            return self.opens[i]
 
-    def getIndexFromDate(self, date):
+        elif type=='h':
+            if verbose:
+                print("Getting High", self.highs[i])
+            return self.highs[i]
+
+        elif type == 'l':
+            if verbose:
+                print("Getting Low", self.lows[i])
+                
+            return self.lows[i]
+
+        else:
+            if verbose:
+                print("Getting Close", self.closes[i])
+            return self.closes[i]
+
+    def get_index_from_date(self, date, verbose=False):
 
         if date == 'max':
-            return len(self.closes)
+            return len(self.closes) - 1
 
+        
         for i, d in enumerate(self.dates):
-            if d in date:
-               return i
-               
-    def ohlc(self):
+            diff = d - date
+            if diff <= datetime.timedelta(0):
+                return i
+
+    def ohlc(self, verbose=False):
         """The average of the open low high close
         
         Returns:
@@ -97,7 +137,7 @@ class Equity:
 
         return avg
 
-    def typical_prices(self):
+    def typical_prices(self, verbose=False):
         """The 'Typical Prices' of the equity, or the average of the high,low, and close
         
         Returns:
@@ -107,7 +147,7 @@ class Equity:
 
         return tps
 
-    def balance_of_power(self):
+    def balance_of_power(self, verbose=False):
         """The balance of the power is a metric for
          determining the variability in the opens/closes versus
          highs/lows
@@ -120,7 +160,7 @@ class Equity:
 
         return bop
 
-    def bollinger_bands(self, period=20, stds=2):
+    def bollinger_bands(self, period=20, stds=2, verbose=False):
         """[The Bolinger Bands is essentially a confidence interval of 
         stds Deviations where the price should be based on the last 
         period periods of prices]
@@ -143,7 +183,7 @@ class Equity:
 
         return bolu, bold
 
-    def accumulative_swing_index(self):
+    def accumulative_swing_index(self, verbose=False):
         """[ASI is a way of looking at the prices of the equity
         in order to get information regarding momentum and market
         conditions]
@@ -176,7 +216,7 @@ class Equity:
             asi[i] = 50 * body * kt
         return asi
 
-    def gop_range_index(self, period=10):
+    def gop_range_index(self, period=10, verbose=False):
         """The GOP looks at the largest swing in prices over the
         last period periods.
         
@@ -199,7 +239,7 @@ class Equity:
 
         return gop
 
-    def pivot_points(self):
+    def pivot_points(self, verbose=False):
         """[Pivot poits are the centers of recent price movement]
         
         Returns:
@@ -227,7 +267,7 @@ class Equity:
 
         return pivots, r1s, r2s, s1s, s2s
 
-    def pivot_indicator(self):
+    def pivot_indicator(self, verbose=False):
         """[Gets the spread between closing prices and the pivot points
         for a given day]
         
@@ -241,3 +281,8 @@ class Equity:
             ind[i] = self.closes[i] - pivots[i]
 
         return ind
+
+    def conv_date(self, date, verbose=False):
+        ts = pd.Timestamp(date)
+
+        return ts.to_pydatetime()   

@@ -1,22 +1,25 @@
-
-"""
-Instance of this class has 4 variables
-1) num_shares: # of shares traded (can be negative or positive)
-2) share_price: share price at time of acquisition
-3) trade_value: the total value of the trade
-4) trade_type: either 'buy' or 'sell or short'
-"""
+import datetime
 
 class Trade:
 
-    def __init__(self, num_shares, date):
+    def __init__(self, date, num_shares, verbose=False):
+        self.date_purchased = date
+        if verbose:
+            print(num_shares)
         self.num_shares = num_shares
-        self.date = date
+        self.sold = False
+        self.date_sold = datetime.datetime(2100,1,1)
 
-    def get_type(self):
-        if self.num_shares > 0:
-            return 'buy'
-        else:
-            return 'sell or short'
+    def purchase_date(self, verbose=False):
+        return self.date_purchased
 
-    
+    def sell(self, sell_date, verbose=False):
+        self.sold = True
+        self.date_sold = sell_date
+        return self
+
+    def __repr__(self):
+        return "[Date Purchased: %s, %s shares, Date Sold: %s]" % ("" + str(self.date_purchased.day) + "/" + str(self.date_purchased.month) + "/" + str(self.date_purchased.year), self.num_shares, str(self.date_sold.day) + "/" + str(self.date_sold.month) + "/" + str(self.date_sold.year))
+
+    def __str__(self):
+        return "[Date Purchased: %s, %s shares, Date Sold: %s]" % ("" + str(self.date_purchased.day) + "/" + str(self.date_purchased.month) + "/" + str(self.date_purchased.year), self.num_shares, str(self.date_sold.day) + "/" + str(self.date_sold.month) + "/" + str(self.date_sold.year))

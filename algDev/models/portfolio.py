@@ -1,76 +1,114 @@
 import numpy as np
+import random
+import os
+import datetime
+import pandas as pd
+from models.equity import Equity
+from models.position import Position
+
+## Dummy function for testing purposes
+
+
+def model_output(position, verbose=False):
+
+    ## Game changing algorithm.
+    signal = 1 if random.random() > .5 else 0
+    alloc = random.random() / 10
+
+    return signal, alloc
 
 class Portfolio:
-    
-    def __init__(self, value, eqs):
+
+    def __init__(self, value, eqs, init_date, verbose=False):
         self.positions = []
-        self.total_value = value
-        self.allocated_resources = 0
+        self.free_cash = {init_date: value}
+        self.init_positions(eqs, verbose)
 
-        for i in range(0, len(eqs) - 1):
-            new_pos = Position(eqs[i])
-            self.positions.insert(new_pos)
+    def init_positions(self, eqs, verbose=False):
+        here = os.path.abspath(os.path.dirname(__file__))
+        data_directory = os.path.join(here, '..\\data')
+        eq_directory = os.path.join(data_directory, 'equities')
+        for eq in eqs:
+            eq_file = os.path.join(eq_directory, eq + '.xlsx')
+            e = Equity(eq_file)
+            position = Position(e, verbose)
+            self.positions.append(position)
+    
+    def getPosition(self, ticker, verbose=False):
 
-    def today(self):
-        today = self.positions[0].eq.dates[0]
-        return today
+        for p in self.positions:
+            
+            if p.ticker in ticker:
+                return p
 
-    def getWeight(self, pos, date = self.today(), type = 'O'):
-        amt = pos.get_price(date, type) * pos.num_shares
-        return amt/allocated_resources
+    def realloc(self, date, strategy_lookback, strategy_threshold, verbose=False):
+        
+        self.free_cash[date] = self.free_cash[list(self.free_cash.keys())[len(self.free_cash.keys())-1]]
+        
+        predictions, allocations = np.zeros((len(self.positions),)), np.zeros((len(self.positions),))
+    
+        self.update_closings(strategy_lookback, strategy_threshold, date, verbose)
 
-    def realloc(self, date = self.today()):
-
-        predictions = np.zeros((len(self.positions), 10))
-
-        for i,position in enumerate(positions):
+        for i,position in enumerate(self.positions):
             ### RUN MODEL FOR PARTICULAR EQUITY
-            predictions[i, :] = ## MODEL WOULD GO HERE
+            predictions[i], allocations[i] = model_output(position, verbose)## MODEL WOULD GO HERE
+            
+        
+        ## After that loop, predictions will be 1/0 corresponding to buy/do nothing
+        ## allocations will be a decimal indicating how much of our portfolio we should give to that
+        
+        ## for first try, we will just ignore allocation, but this should turn allcations into dollar amounts
+        allocations = self.calculate_allocations(allocations, date, verbose)
+        
+        for i, pos in enumerate(self.positions):
+            self.free_cash[date] -= pos.purchase(predictions[i], allocations[i], date, verbose)
+        if verbose is True:
+            print("Current Free Cash: ", self.free_cash[date])
+            print("Current Positions Value: ", self.getValue(date) - self.free_cash[date])
+        return self.update(verbose)
 
-        recommended_allocation = selectAssets(predictions)
+    def update(self, verbose=False):
+        return 0
 
-        for i, position in enumerate(positions):
-
-            curr_alloc = position.value / self.value
-
-            diff = recommended_allocation[i] - curr_alloc
-
-            amt = diff * self.value
-
-            position.trade_value(amt, date)
-                
-    def selectAssets(o, short=False):
-
-        evs = []
-
-        for pred in o:
-            evs.append(expected_value(pred))
-
+    def calculate_allocations(self, allocations, date, verbose=False):
         total = 0
-        for i in range(len(evs)):
-            if evs[i] < 0:
-                evs[i] = 0
-            total = total + evs[i]
+        for i, alloc in enumerate(allocations):
+            total += alloc
+        
+        ## Allocate one tenth of free cash
+        allocations = allocations/(total * 10)
 
-        evs = evs/total
+        allocations = allocations * self.free_cash[date]
 
-        return evs
+        return allocations
 
-    def expected_value(x):
+    def update_closings(self, strategy_lookback, strategy_threshold, date, verbose=False):
 
-        ev = 0
-        bounds = [-0.9, -0.4, -0.085, -.045, -0.01, 0.01, 0.035, 0.065,
-                  0.095, 0.13]
+        for i, pos in enumerate(self.positions):
+        
+            self.free_cash[date] += pos.handle_closings(strategy_threshold, strategy_lookback, date, verbose)
+        
+    def date_ob(self, date, verbose=False):
 
-        for i in range(len(bounds)):
-            ev = ev + (bounds[i] * x[i])
+        pos = self.positions[0]
 
-        return ev
+        most_recent_date = pos.eq.dates[0]
+        
+        return date > most_recent_date
 
-    #ISSUE WITH NEEDING DATES THROUGHOUT NOW
-    def variance(self, date = self.today(), days = 500, start = 'O', stop = 'C'):
-        var = 0
-        for i in range(0,len(positions)-1):
-            var = var + (positions[i].getWeight(date, start)^2)*(Finance.variance(positions[i].eq,days, start, stop))
+    def getValue(self, date, verbose=False):
 
-        return var
+        value = self.free_cash[date]
+        
+        for pos in self.positions:
+            if verbose:
+                print("Pos:", pos.ticker)
+                print("Trades:", pos.trades)
+            pos_value = pos.value(date, verbose)
+            if verbose:
+                print(pos_value)
+            value+=pos_value
+
+        return value
+        
+
