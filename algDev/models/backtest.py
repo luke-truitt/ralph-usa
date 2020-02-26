@@ -6,7 +6,6 @@ from models.equity import Equity
 from models.portfolio import Portfolio
 import datetime
 import os
-
 ### Simulate the success of a model or trading strategy
 class Backtest():
 
