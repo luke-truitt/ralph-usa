@@ -8,8 +8,6 @@ from models.position import Position
 from models.finance import Finance
 
 ## Dummy function for testing purposes
-
-
 def model_output(position, verbose=False):
     """
     Generate random buy/sell/hold signal
@@ -29,14 +27,14 @@ class Portfolio:
         self.positions = []
         self.free_cash = {init_date: value}
         self.init_positions(eqs, verbose)
-        self.cov_arr = []
+        self.cov_arr = np.zeros((len(self.positions),len(self.positions)))
         self.init_cov_arr(eqs, init_date, days, start, stop)
 
     def init_cov_arr(self, eqs, init_date, days=500,start = 'O', stop = 'C'):
         for i in range(0, len(self.positions)-1):
-            eq1 = self.positions[i]
+            eq1 = self.positions[i].eq
             for j in range(0, len(self.positions)-1):
-                eq2 = self.positions[j]
+                eq2 = self.positions[j].eq
                 self.cov_arr[i, j] = Finance.covariance(eq1, eq2, init_date, days, start, stop)
 
     def init_positions(self, eqs, verbose=False):
