@@ -5,6 +5,7 @@ import datetime
 import pandas as pd
 from models.equity import Equity
 from models.position import Position
+from models.finance import Finance
 
 ## Dummy function for testing purposes
 
@@ -19,10 +20,19 @@ def model_output(position, verbose=False):
 
 class Portfolio:
 
-    def __init__(self, value, eqs, init_date, verbose=False):
+    def __init__(self, value, eqs, init_date, days=500, start='O', stop='C', verbose=False):
         self.positions = []
         self.free_cash = {init_date: value}
         self.init_positions(eqs, verbose)
+        self.cov_arr = []
+        self.init_cov_arr(eqs, days, start, stop)
+
+    def init_cov_arr(self, eqs, days=500,start = 'O', stop = 'C'):
+        for i in range(0: len(self.positions)-1):
+            eq1 = self.positions[i]
+            for j in range(0: len(self.positions)-1):
+                eq2 = self.positions[j]
+                self.cov_arr[i, j] = Financ.covariance(eq1, eq2, days, start, stop)
 
     def init_positions(self, eqs, verbose=False):
         here = os.path.abspath(os.path.dirname(__file__))
@@ -38,7 +48,7 @@ class Portfolio:
 
         for p in self.positions:
             
-            if p.ticker in ticker:
+            if p.ticker == ticker:
                 return p
 
     def realloc(self, date, strategy_lookback, strategy_threshold, verbose=False):
