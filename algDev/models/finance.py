@@ -1,5 +1,6 @@
 import pandas as pd
 import math
+import datetime
 import numpy as np
 import statistics as stat 
 #from portfolio import Portfolio
@@ -32,8 +33,10 @@ class Finance:
     """
     #TESTING
     @staticmethod
-    def dailyChanges(eq, days = 500, start = 'O', stop = 'C'):
+    def dailyChanges(eq, today = datetime.date(2020,2,5), days = 500, start = 'O', stop = 'C'):
         
+        today_index = eq.get_index_from_date(today)
+
         start = start.upper()
         stop = stop.upper()
 
@@ -43,49 +46,49 @@ class Finance:
         p1 = switcher.get(start, 0)
         p2 = switcher.get(stop, 0)
 
-        #If IPO date happened < days days ago
-        if days > len(p1):
-            days = len(p1)
+        #If IPO date happened < days days ago from today
+        if today_index + days > len(p1):
+            days = len(p1) - today_index
 
         if(start == stop):
             daily_returns = [0] * (days-1)
 
-            for i in range(0, days - 2):
+            for i in range(today_index, today_index + days - 2):
                 daily_returns[i] = Finance.pChange(p1[i+1],p2[i])
 
         
         else:
             daily_returns = [0] * (days)
         
-            for i in range(0,days-1): 
+            for i in range(today_index,today_index + days-1): 
                 daily_returns[i] = Finance.pChange(p1[i],p2[i])
         
         return daily_returns
 
     #DONE
     @staticmethod
-    def mean(eq, days = 500, start = 'O', stop = 'C'):
+    def mean(eq, today = datetime.date(2020,2,5), days = 500, start = 'O', stop = 'C'):
         start = start.upper()
         stop = stop.upper()
 
-        return stat.mean(Finance.dailyChanges(eq, days, start, stop))
+        return stat.mean(Finance.dailyChanges(eq, today, days, start, stop))
 
     #DONE
     @staticmethod
-    def variance(eq, days = 500, start = 'O', stop = 'C'):
+    def variance(eq, today = datetime.date(2020,2,5), days = 500, start = 'O', stop = 'C'):
         start = start.upper()
         stop = stop.upper()
 
-        return stat.pvariance(Finance.dailyChanges(eq,days, start, stop))
+        return stat.pvariance(Finance.dailyChanges(eq, today, days, start, stop))
 
     #DONE
     @staticmethod
-    def covariance(eq1, eq2, days = 500, start = 'O', stop = 'C'):
+    def covariance(eq1, eq2, today = datetime.date(2020,2,5), days = 500, start = 'O', stop = 'C'):
         start = start.upper()
         stop = stop.upper()
 
-        DCeq1 = Finance.dailyChanges(eq1, days, start, stop)
-        DCeq2 = Finance.dailyChanges(eq2, days, start, stop)
+        DCeq1 = Finance.dailyChanges(eq1, today, days, start, stop)
+        DCeq2 = Finance.dailyChanges(eq2, today, days, start, stop)
 
         #If one security IPO in the last days days, then adjust so lists are same length
         if(len(DCeq1) != len(DCeq2)):
@@ -98,20 +101,20 @@ class Finance:
 
     #DONE
     @staticmethod
-    def stddev(eq, days = 500, start = 'O', stop = 'C'):
+    def stddev(eq, today = datetime.date(2020,2,5), days = 500, start = 'O', stop = 'C'):
         start = start.upper()
         stop = stop.upper()
 
-        return math.sqrt(Finance.variance(eq, days, start, stop))
+        return math.sqrt(Finance.variance(eq, today, days, start, stop))
     
     #DONE
     @staticmethod
-    def correlation(eq1, eq2, days = 500, start = 'O', stop = 'C'):
+    def correlation(eq1, eq2, today = datetime.date(2020,2,5), days = 500, start = 'O', stop = 'C'):
         start = start.upper()
         stop = stop.upper()
 
-        cov = Finance.covariance(eq1, eq2, days, start, stop)
-        std1 = Finance.stddev(eq1, days, start, stop)
-        std2 = Finance.stddev(eq2, days, start, stop)
+        cov = Finance.covariance(eq1, eq2, today, days, start, stop)
+        std1 = Finance.stddev(eq1, today, days, start, stop)
+        std2 = Finance.stddev(eq2, today, days, start, stop)
 
         return cov/(std1*std2)

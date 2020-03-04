@@ -11,9 +11,14 @@ from models.finance import Finance
 
 
 def model_output(position, verbose=False):
+    """
+    Generate random buy/sell/hold signal
+    1:Buy, 0:Hold, -1:Sell
+    Confidence Level: # between 0 and 1
+    """
+    signal = random.randint(-1, 1)
+    confidence = random.random()
 
-    ## Game changing algorithm.
-    signal = 1 if random.random() > .1 else 0
     alloc = random.random() / 10
 
     return signal, alloc
@@ -25,14 +30,14 @@ class Portfolio:
         self.free_cash = {init_date: value}
         self.init_positions(eqs, verbose)
         self.cov_arr = []
-        self.init_cov_arr(eqs, days, start, stop)
+        self.init_cov_arr(eqs, init_date, days, start, stop)
 
-    def init_cov_arr(self, eqs, days=500,start = 'O', stop = 'C'):
-        for i in range(0: len(self.positions)-1):
+    def init_cov_arr(self, eqs, init_date, days=500,start = 'O', stop = 'C'):
+        for i in range(0, len(self.positions)-1):
             eq1 = self.positions[i]
-            for j in range(0: len(self.positions)-1):
+            for j in range(0, len(self.positions)-1):
                 eq2 = self.positions[j]
-                self.cov_arr[i, j] = Financ.covariance(eq1, eq2, days, start, stop)
+                self.cov_arr[i, j] = Finance.covariance(eq1, eq2, init_date, days, start, stop)
 
     def init_positions(self, eqs, verbose=False):
         here = os.path.abspath(os.path.dirname(__file__))
