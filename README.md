@@ -1,5 +1,12 @@
 ## ML
 
+## Running Instructions
+Two terminals are required to run this program.
+To run the frontend, first, in frontend/src/environments, create a duplicate of the file `environment.prod.ts` in the same directory, but rename the duplicate to `environment.ts`. Next, cd into the "frontend" directory and run `ng serve`.
+To run the backend, cd into the backend and run the `run.py` python script with the argument "run" as such: `python run.py run`. Prior to running the script, ensure that all necessary dependencies have been installed by running `pip install -r requirements.txt` through `pip`. Please note that this project was made to be compatible with Python 3.
+
+Once both the frontend and backend are running, navigate to localhost:4200 on your browser (preferably Chrome) to access the app.
+
 ### Creating Data for LSTM
 ```
 from gen_lstm_data import gen_data
