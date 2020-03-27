@@ -17,10 +17,6 @@ def model_output(position, verbose=False):
     signal = random.randint(-1, 1) ##Placeholder
     confidence = random.random() ##Placeholder
 
-    ## Game changing algorithm.
-    signal = 1 if random.random() > .5 else 0
-    alloc = random.random() / 10
-
     return signal, alloc
 
 class Portfolio:
