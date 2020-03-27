@@ -37,7 +37,7 @@ class Portfolio:
 
         self.update_cov_arr(init_date, days, start, stop)
 
-    def update_cov_arr(self, init_date, days=500,start = 'O', stop = 'C'):
+    def update_cov_arr(self, init_date, days=500, start = 'O', stop = 'C'):
         for i in range(0, len(self.positions)):
             eq1 = self.positions[i].eq
             for j in range(0, len(self.positions)):
