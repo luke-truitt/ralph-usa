@@ -1,6 +1,7 @@
 import numpy as np
 from math import *
 from build_features import gen_features
+from models.feature_builder import build_labels_string
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
@@ -19,23 +20,16 @@ def get_pixels(a):
     max = np.max(a)
     min = np.min(a)
 
-    a = ((a - min)/(max - min)) * 255
+    a = ((a - min)/(max - min))
 
     return a
 
 def gen_data(eq):
-    eq_path = r'./algDev/data/equities/%s.csv' % eq
 
-    features = np.array(gen_features(eq_path, 500))
-
+    features = np.array(gen_features(eq))
+    labels = np.array(build_labels_string(eq))
     ## Generate data that is square.
 
     pics = gen_pics(features)
 
-    i = 0
-
-    for pic in pics:
-        plt.imsave('images/%d.png' % i, np.array(pics[i]), cmap=cm.gray)
-        i = i+1
-
-gen_data('VSLR')
+    return pics, labels

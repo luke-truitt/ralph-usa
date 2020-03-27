@@ -11,9 +11,9 @@ import numpy as np
 # labels = 10 classes
 
 
-(X_train, y_train, X_test, y_test) = gen_data(eq = "VSLR", verbose= True)
-# print(y_train[0])
-# print(X_train[0])
+(X_train, y_train, X_test, y_test) = gen_data(eq = "AAPL", verbose= True)
+print(y_train[0])
+print(X_train[0])
 
 
 # first model (w/o text pipeline)
@@ -27,7 +27,7 @@ def create_model1a():
     model.add(Dense(28))
     model.add(LeakyReLU())
     model.add(BatchNormalization())
-    model.add(Dense(10, activation = "softmax")) 
+    model.add(Dense(25, activation = "softmax")) 
     return model
 
 

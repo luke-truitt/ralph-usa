@@ -62,6 +62,8 @@ class Backtest():
             initial_val.append(initial_value)
             snp.append(sp.get_price(start_date + i_day))
 
+        import numpy as np
+
         fig, ax1 = plt.subplots()
 
         color = 'tab:red'
@@ -76,7 +78,7 @@ class Backtest():
         ax2.set_ylabel('SNP', color=color)  # we already handled the x-label with ax1
         ax2.plot(dates, snp, color=color)
         ax2.tick_params(axis='y', labelcolor=color)
-
+        
         fig.tight_layout()  # otherwise the right y-label is slightly clipped
         plt.show()
 

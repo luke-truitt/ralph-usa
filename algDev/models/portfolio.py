@@ -8,7 +8,7 @@ from models.position import Position
 from models.finance import Finance
 
 ## Dummy function for testing purposes
-def model_output(position, verbose=False):;len
+def model_output(position, verbose=False):
     """
     Generate random buy/sell/hold signal
     1:Buy, 0:Hold, -1:Sell
@@ -17,11 +17,15 @@ def model_output(position, verbose=False):;len
     signal = random.randint(-1, 1) ##Placeholder
     confidence = random.random() ##Placeholder
 
-    return signal, confidence
+    ## Game changing algorithm.
+    signal = 1 if random.random() > .5 else 0
+    alloc = random.random() / 10
+
+    return signal, alloc
 
 class Portfolio:
 
-    def __init__(self, value, eqs, init_date, days=500, start='O', stop='C', verbose=False):
+    def __init__(self, value, eqs, init_date, days = 500, start = 'O', stop = 'C', verbose=False):
         self.positions = []
         self.free_cash = {init_date: value}
         self.init_positions(eqs, verbose)
@@ -55,7 +59,7 @@ class Portfolio:
 
         for p in self.positions:
             
-            if p.ticker == ticker:
+            if p.ticker in ticker:
                 return p
 
     def exp_ret(self, position, prediction, confidence, strategy_upper_threshold, strategy_lower_threshold, verebose):
