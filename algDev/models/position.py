@@ -30,20 +30,20 @@ class Position:
         self.trade_shares(num_shares, date)
         return left_over
 
-    def buy_shares(self, num_shares, date, verbose=False):
-        return self.trade_shares(num_shares, date)
+    def buy_shares(self, num_shares,verbose=False):
+        return self.trade_shares(num_shares)
 
-    def sell_shares(self, num_shares, date, verbose=False):
-        return self.trade_shares(-1 * num_shares, date)
+    def sell_shares(self, num_shares,verbose=False):
+        return self.trade_shares(-1 * num_shares)
 
     def value(self, date,verbose=False):
         return self.eq.get_price(date, 'c', verbose) * self.get_shares(date)
 
-    def is_short(self, date, verbose=False):
-        return self.get_shares(date, verbose) < 0
+    def is_short(self,verbose=False):
+        return self.size < 0
 
-    def has_position(self, date, verbose=False):
-        return self.get_shares(date, verbose) is not 0
+    def has_position(self,verbose=False):
+        return self.size is not 0
 
     def get_shares(self, date, verbose=False):
         total = 0

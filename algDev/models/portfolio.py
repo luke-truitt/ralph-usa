@@ -5,35 +5,24 @@ import datetime
 import pandas as pd
 from models.equity import Equity
 from models.position import Position
-from models.finance import Finance
 
 ## Dummy function for testing purposes
-def model_output(position, verbose=False):
-    """
-    Generate random buy/sell/hold signal
-    1:Buy, 0:Hold, -1:Sell
-    Confidence Level: # between 0 and 1
-    """
-    signal = random.randint(-1, 1)
-    confidence = random.random()
 
-    return signal, confidence
+
+def model_output(position, verbose=False):
+
+    ## Game changing algorithm.
+    signal = 1 if random.random() > .5 else 0
+    alloc = random.random() / 10
+
+    return signal, alloc
 
 class Portfolio:
 
-    def __init__(self, value, eqs, init_date, days=500, start='O', stop='C', verbose=False):
+    def __init__(self, value, eqs, init_date, verbose=False):
         self.positions = []
         self.free_cash = {init_date: value}
         self.init_positions(eqs, verbose)
-        self.cov_arr = np.zeros((len(self.positions),len(self.positions)))
-        self.init_cov_arr(eqs, init_date, days, start, stop)
-
-    def init_cov_arr(self, eqs, init_date, days=500,start = 'O', stop = 'C'):
-        for i in range(0, len(self.positions)-1):
-            eq1 = self.positions[i].eq
-            for j in range(0, len(self.positions)-1):
-                eq2 = self.positions[j].eq
-                self.cov_arr[i, j] = Finance.covariance(eq1, eq2, init_date, days, start, stop)
 
     def init_positions(self, eqs, verbose=False):
         here = os.path.abspath(os.path.dirname(__file__))
@@ -49,30 +38,30 @@ class Portfolio:
 
         for p in self.positions:
             
-            if p.ticker == ticker:
+            if p.ticker in ticker:
                 return p
 
     def realloc(self, date, strategy_lookback, strategy_threshold, verbose=False):
         
         self.free_cash[date] = self.free_cash[list(self.free_cash.keys())[len(self.free_cash.keys())-1]]
         
-        predictions, confidences = np.zeros((len(self.positions),)), np.zeros((len(self.positions),))
+        predictions, allocations = np.zeros((len(self.positions),)), np.zeros((len(self.positions),))
     
         self.update_closings(strategy_lookback, strategy_threshold, date, verbose)
 
         for i,position in enumerate(self.positions):
             ### RUN MODEL FOR PARTICULAR EQUITY
-            predictions[i], confidences[i] = model_output(position, verbose)## MODEL WOULD GO HERE
+            predictions[i], allocations[i] = model_output(position, verbose)## MODEL WOULD GO HERE
             
         
         ## After that loop, predictions will be 1/0 corresponding to buy/do nothing
         ## allocations will be a decimal indicating how much of our portfolio we should give to that
         
         ## for first try, we will just ignore allocation, but this should turn allcations into dollar amounts
-        #allocations = self.calculate_allocations(allocations, date, verbose)
+        allocations = self.calculate_allocations(allocations, date, verbose)
         
         for i, pos in enumerate(self.positions):
-            self.free_cash[date] -= pos.purchase(predictions[i], confidences[i], date, verbose)
+            self.free_cash[date] -= pos.purchase(predictions[i], allocations[i], date, verbose)
         if verbose is True:
             print("Current Free Cash: ", self.free_cash[date])
             print("Current Positions Value: ", self.getValue(date) - self.free_cash[date])
@@ -81,8 +70,6 @@ class Portfolio:
     def update(self, verbose=False):
         return 0
 
-
-    ##GET RID OF THIS
     def calculate_allocations(self, allocations, date, verbose=False):
         total = 0
         for i, alloc in enumerate(allocations):
