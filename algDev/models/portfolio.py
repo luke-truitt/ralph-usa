@@ -11,7 +11,7 @@ from models.finance import Finance
 def model_output(position, verbose=False):
     """
     Generate random buy/sell/hold signal
-    1:Buy, 0:Hold, -1:Sell
+    1:Buy, 0:Hold, -1:Short
     Confidence Level: # between 0 and 1
     """
     signal = random.randint(0, 1) ##Placeholder, does not include shorting
