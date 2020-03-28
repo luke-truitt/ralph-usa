@@ -1,11 +1,13 @@
 from models.trade import Trade
+from models.finance import Finance
 import datetime
 
 class Position:
-    def __init__(self, eq,verbose=False):
+    def __init__(self, eq, init_date,days = 500, start = 'O', stop = 'C', verbose=False):
         self.ticker = eq.ticker
         self.eq = eq
         self.trades = []
+        self.daily_changes = Finance.dailyChanges(self.eq, init_date, days, start, stop)
 
     ##CHANGE TO ACCOMODATE SHORTING
     def purchase(self, prediction, allocation, today,verbose=False):

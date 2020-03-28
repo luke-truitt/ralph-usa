@@ -34,7 +34,8 @@ class Equity:
             the equity information]
         """
 
-        eq_path = r'./algDev/data/equities/%s.xlsx' % ticker
+        ##eq_path = r'./algDev/data/equities/%s.xlsx' % ticker
+        eq_path = r'%s' % ticker
         self.data = pd.read_excel(eq_path)
         
         dataFile_len = len(eq_path)

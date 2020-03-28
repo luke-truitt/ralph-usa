@@ -81,6 +81,18 @@ class Finance:
 
     #DONE
     @staticmethod
+    def update_dailyChanges(position, today, start = 'O', stop = 'C', verbose = False):
+        if verbose:
+            print("Updating daily changes")
+
+        np.delete(position.daily_changes, len(position.daily_changes)-1)
+        
+        np.insert(position.daily_changes, 0, Finance.dailyChanges(position.eq, today, 1, start, stop))
+
+        return position.daily_changes
+
+    #DONE
+    @staticmethod
     def mean(eq, today = datetime.datetime(2020,2,5), days = 500, start = 'O', stop = 'C'):
         start = start.upper()
         stop = stop.upper()
