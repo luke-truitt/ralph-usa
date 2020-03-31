@@ -3,11 +3,10 @@ from models.finance import Finance
 import datetime
 
 class Position:
-    def __init__(self, eq, init_date,days = 500, start = 'O', stop = 'C', verbose=False):
+    def __init__(self, eq, init_date,days = 500, verbose=False):
         self.ticker = eq.ticker
         self.eq = eq
         self.trades = []
-        self.daily_changes = Finance.dailyChanges(self.eq, init_date, days, start, stop)
 
     ##CHANGE TO ACCOMODATE SHORTING
     def purchase(self, prediction, allocation, today,verbose=False):
@@ -66,8 +65,11 @@ class Position:
         return total
 
     ##Note: lower_limit should be a negative float
-    def handle_closings(self, upper_limit, lower_limit, exp, today, verbose=False):
+    def handle_closings(self, params, today, verbose=False):
         cash = 0
+        exp = params['period']
+        upper_limit = params['upper_threshold']
+        lower_limit = params['lower_threshold']
         if verbose:
             print("Checking position for closings")
         for i,trade in enumerate(self.trades):
@@ -88,7 +90,7 @@ class Position:
                 if verbose:
                     print("Bought at: ", self.eq.get_price(pur_date, 'o', verbose))
                     print("Sold at: ", self.eq.get_price(today, 'h', verbose))
-                cash += trade.num_shares * self.eq.get_price(today, 'h', verbose)
+                cash += trade.num_shares * upper_limit_price
                 self.trades[i] = trade.sell(today, verbose)
 
             lower_limit_price = self.eq.get_price(pur_date, 'o', verbose) * (1+ lower_limit)
@@ -97,7 +99,7 @@ class Position:
                 if verbose:
                     print("Bought at: ", self.eq.get_price(pur_date, 'o', verbose))
                     print("Sold at: ", self.eq.get_price(today, 'l', verbose))
-                cash += trade.num_shares * self.eq.get_price(today, 'l', verbose)
+                cash += trade.num_shares * lower_limit_price
                 self.trades[i] = trade.sell(today, verbose)
 
         if verbose:
