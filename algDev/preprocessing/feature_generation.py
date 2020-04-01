@@ -5,10 +5,10 @@ import datetime
 import os
 import matplotlib.pyplot as plt
 
-from models.equity import Equity
-from models.indicators import Indicators
-from models.indicator import Indicator
-from preprocessing import utils
+from algDev.models.equity import Equity
+from algDev.models.indicators import Indicators
+from algDev.models.indicator import Indicator
+from algDev.preprocessing import utils
 here = os.path.abspath(os.path.dirname(__file__))
 
 def macd_raw_feature(eq, slow_period, fast_period):
@@ -52,10 +52,10 @@ def olhc_feature(eq):
     return [Indicator(ohlc_vec)]
 
 def rainbow_feature(eq, smas):
-
+    
     ohlc_vec = olhc_feature(eq)[0].values
     rainbow_vecs = Indicators.rainbow_ma(ohlc_vec, smas)
-
+    
     return rainbow_vecs
 
 def oil_feature():
@@ -156,6 +156,17 @@ def atr_feature(eq, period):
 
     return [Indicator(atr_vec)]
 
+def trix_feature(eq):
+    trix_vec = np.array(Indicators.trix_indicator(eq.closes))
+    trix_vec = trix_vec.T
+
+    return [Indicator((trix_vec))]
+    
+def kst_feature(eq):
+    kst_vec = np.array(Indicators.kst(eq.closes))
+    kst_vec = kst_vec.T
+
+    return [Indicator(kst_vec)]
 def plot_features(eq, features, ax, range=-1):
     feature_set = get_feature_set(eq, features)
     fs = concat_indicators(feature_set)
@@ -200,10 +211,8 @@ def concat_indicators(feature_set):
         [list of Indicators] -- list of resized Indicators
     """
     num_features = len(feature_set)
-    print(feature_set)
     lens = np.array([f.len for f in feature_set])
     min_len = np.min(lens)
-    print(min_len)
 
     for i in range(num_features):
         
@@ -221,7 +230,7 @@ def concat_features(feature_set):
         ndarray -- 2d array of features over time
     """
     num_features = len(feature_set)
-
+    
     lens = np.array([f.len for f in feature_set])
     min_len = np.min(lens)
     
@@ -249,6 +258,7 @@ def create_features(eq, features, normalize = True, save = False):
     Returns:
         ndarray -- 2d array of features over time
     """
+
     feature_set = get_feature_set(eq, features)
     fs = concat_features(feature_set)
     
@@ -292,16 +302,15 @@ def get_feature(eq, feature_arg):
         ndarray -- array of feature values
     """
     args = feature_arg.split('_')
-    feature = args[0]
-
+    feature = args[0].lower()
     if len(args)==1:
         args.append('9')
+    all_periods = [int(i) for i in args[1:]]
     if len(args)==2:
         args.append('18')
 
     fast_period = int(args[1])
     slow_period = int(args[2])
-    all_periods = [int(i) for i in args[1:]]
 
     ## Come up with good way to parse an input for a feature and return correct function call
     if(feature=='sma'):
@@ -312,13 +321,13 @@ def get_feature(eq, feature_arg):
         return wilder_feature(eq, fast_period)
     elif(feature=='macd'):
         return macd_raw_feature(eq, slow_period, fast_period)
-    elif(feature=='macdSig'):
+    elif(feature=='macdsig'):
         return macd_signal(eq, slow_period, fast_period)
     elif(feature=='kst'):
-        return ''
+        return kst_feature(eq)
     elif(feature=='trix'):
-        return ''
-    elif(feature=='kstTrix'):
+        return trix_feature(eq)
+    elif(feature=='ksttrix'):
         return kst_trix_vec_feature(eq)
     elif(feature=='rsi'):
         return rsi_feature(eq)
@@ -342,11 +351,11 @@ def get_feature(eq, feature_arg):
         return volume_feature(eq)
     elif(feature=='closes'):
         return close_feature(eq)
-    elif(feature=='upperBol'):
+    elif(feature=='upperbol'):
         return upper_bollinger_feature(eq)
-    elif(feature=='lowerBol'):
+    elif(feature=='lowerbol'):
         return lower_bollinger_feature(eq)
-    elif(feature=='accumSwing'):
+    elif(feature=='accumswing'):
         return accum_swing_feature(eq)
     elif(feature=='atr'):
         return atr_feature(eq, fast_period)

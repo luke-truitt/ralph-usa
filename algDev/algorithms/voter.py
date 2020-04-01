@@ -1,8 +1,6 @@
 from sklearn import svm
-from build_dfFeatures import gen_features
-from gen_indicators import gen_data
-from svm import svm_collection
-from models.equity import Equity
+from algDev.algorithms.svm import SVM
+from algDev.models.equity import Equity
 
 class Voter:
     """Voting algorithm class
@@ -10,9 +8,7 @@ class Voter:
     Returns:
         Voter -- Object for running votes
     """
-    self.valid_voting_types = [
-        'accuracy'
-    ]
+    
     def __init__(self, voting_type):
         """initialize voter
         
@@ -20,6 +16,9 @@ class Voter:
             voting_type {string} -- the voting mechanism to use (see docs)
         """
         super().__init__()
+        self.valid_voting_types = [
+        'accuracy'
+        ]
         assert voting_type in self.valid_voting_types
         self.voting_type = voting_type
         

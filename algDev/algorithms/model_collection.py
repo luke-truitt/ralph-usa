@@ -1,7 +1,8 @@
-from algorithms.svm import SVM
-from algorithms.cnn import CNN
-from models.equity import Equity
-from preprocessing import data_generator  
+from algDev.algorithms.svm import SVM
+from algDev.algorithms.cnn import CNN
+from algDev.models.equity import Equity
+from algDev.preprocessing import data_generator  
+
 class ModelCollection:
     """a collection of models that each make a prediction for a given equity.
     
@@ -18,12 +19,12 @@ class ModelCollection:
             params {dictionary} -- any extra parameters seen as useful, some examples
                                     include 
                                     length: the number of days in the input data,
-                                    threshold: documentation for label threshold,
+                                    upper_threshold: documentation for label threshold,
                                     period: documentation for label period,
                                     cnn_split: number of cnns to use if necessary
         """
         self.eq = Equity(ticker)
-        self.features = features
+        self.features = data_generator.parse_features(features)
         self.type = type
         self.params = params
         self.models = self.init_models()
@@ -37,12 +38,13 @@ class ModelCollection:
         """
         models = []
         if self.type=='cnn':
-            Xs, ys = data_generator.gen_cnn_data(self.eq, self.features, self.params['length'], self.params['threshold'], self.params['period'], self.params['cnn_split'])
+            Xs, ys = data_generator.gen_cnn_data(self.eq, self.features, self.params['length'], self.params['upper_threshold'], self.params['period'], self.params['cnn_split'])
             for i in range(len(Xs)):
                 models.append(CNN(Xs[i],ys[i], title=str(i)))
         elif self.type=='svm':
             for feature in self.features:
-                X,y = data_generator.gen_svm_data(eq, [feature], self.params['length'], self.params['threshold'], self.params['period'])
+                X,y = data_generator.gen_svm_data(self.eq, [feature], self.params['length'], self.params['upper_threshold'], self.params['period'])
+                
                 models.append(SVM(X,y,title=feature))
         return models
 
@@ -62,12 +64,18 @@ class ModelCollection:
         """
         self.update_params(params)
 
-    def train_models(self):
+    def train_models(self, verbose=False):
         """Train all the models
         """
+        if verbose:
+            print("Training Models for ", self.eq.ticker)
         for i, model in enumerate(self.models):
-            model.train(self.params['data_splits'])
+            model.train(self.params['data_splits'], verbose = verbose)
         self.update_accuracy()
+
+    def plot_rocs(self, verbose=False):
+        for model in self.models:
+            model.plot_roc(verbose)
 
     def update_accuracy(self):
         """Update the accuracy of the entire collection by averaging the
@@ -77,5 +85,5 @@ class ModelCollection:
         for model in self.models:
             acc += model.metrics['acc']
 
-        self.accuracy = acc/len(self.accuracy)
+        self.accuracy = acc/len(self.models)
         

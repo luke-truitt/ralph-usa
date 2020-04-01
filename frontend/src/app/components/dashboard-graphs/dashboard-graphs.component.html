@@ -1,14 +1,18 @@
 <div class="main">
 
   <mat-form-field class="example-chip-list" floatPlaceholder="always">
-    <mat-chip-list #chipList aria-label="Selected">
-      <mat-chip *ngFor="let asset of assetData" [selectable]="selectable"
-               [removable]="removable" (removed)="remove(asset.name)">
+    <mat-chip-list aria-label="Selected" #chipList>
+        <div *ngFor="let asset of assetData"> 
+        <mat-chip *ngIf="asset.type=='asset'" [selectable]="selectable"
+        [removable]="removable" (removed)="remove(asset.name)">
         {{asset.name}}
         <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-      </mat-chip>
-      <input placeholder="Add stocks..."
-             [matChipInputFor]="chipList"
+        </mat-chip>
+        </div>
+
+      <input  
+              placeholder="Add stocks..."
+              [matChipInputFor]="chipList"
              [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
              [matChipInputAddOnBlur]="addOnBlur"
              (matChipInputTokenEnd)="getAssetData($event)">
@@ -20,18 +24,9 @@
     </mat-chip-list>
   </mat-form-field>
 
-  <mat-form-field>
-      <mat-label>Model</mat-label>
-      <mat-select (selectionChange)="getModelData($event)" multiple>
-        <mat-option *ngFor="let model of models" [value]="model">
-          {{model}}
-        </mat-option>
-      </mat-select>
-  </mat-form-field>
-
-  <div class="equitySpecific" *ngIf="assetData.length > 0">
+  <div class="equitySpecific">
     <div class="graph">
-      <h2>Allocation Over Time</h2>
+      <h2>Prices Over Time</h2>
       <ngx-charts-line-chart
       [view]="view"
       [scheme]="lineColorScheme"
@@ -51,8 +46,61 @@
       >
       </ngx-charts-line-chart>
     </div>
-    <app-indicators [equity]="mostRecentEquity" ></app-indicators>
+
+    <div class="adder">
+      <mat-chip-list *ngFor="let asset of assetData">
+        <mat-chip *ngIf="asset.type=='indicator'" [removable]="removable" (removed)="remove(asset.name)">
+          {{asset.name}}
+          <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+        </mat-chip>
+      </mat-chip-list>
+
+      <mat-form-field>
+        <mat-label>Indicator</mat-label>
+        <mat-select (selectionChange)="loadParameterFields($event)">
+          <mat-option *ngFor="let indicator of indicators" [value]="indicator">
+            {{indicator}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="paramsField" *ngIf="indicatorSelected">
+        
+        <div>
+          <mat-form-field class="example-full-width">
+            <div *ngIf='numParams != 1'>
+              <mat-label>Commas between {{this.numParams}} parameters</mat-label>
+            </div>
+            <div *ngIf='numParams == 1'>
+              <mat-label>Parameter</mat-label>
+            </div>
+            <input matInput (keydown.enter)="getIndicatorData($event)">
+          </mat-form-field>
+          <mat-error *ngIf="invalidNumParams">
+            Please use {{this.numParams}} parameters
+          </mat-error>
+        </div>
+
+      </div>
+
+    </div>
+  
   </div>
+
+
+  <div class="headings">
+    <h2>Model Performance <div *ngIf="this.mostRecentEquity">for {{this.mostRecentEquity}}</div></h2>
+      <mat-form-field>
+        <mat-label>Model</mat-label>
+        <mat-select (selectionChange)="getModelData($event)">
+          <mat-option *ngFor="let model of models" [value]="model">
+            {{model}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+  </div>
+    <app-indicators [equity]="mostRecentEquity" [model]="activeModel" *ngIf="activeModel.length > 0"></app-indicators>
+
 
 </div>
 

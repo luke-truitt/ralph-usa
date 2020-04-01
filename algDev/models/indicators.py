@@ -2,7 +2,7 @@ import pandas as pd
 import math
 import numpy as np
 
-from models.indicator import Indicator
+from algDev.models.indicator import Indicator
 
 class Indicators:
     
@@ -375,6 +375,7 @@ class Indicators:
     
     @staticmethod
     def rainbow_ma(prices, periods=(1, 3, 5, 7, 9)):
+        
         return [Indicator(Indicators.sma(prices, period).T) for period in periods]
     
     @staticmethod
@@ -405,7 +406,9 @@ class Indicators:
     
     @staticmethod
     def prings_know_sure_thing(prices):
-        kst_vec = Indicators.kst(prices)[:-9]
+
+        kst_vec = Indicators.kst(prices)
         kst_sma = Indicators.sma(kst_vec, 9)
+        kst_vec = kst_vec[:-9]
         assert len(kst_vec)==len(kst_sma)
         return np.array([kst_vec[i] - kst_sma[i] for i in range(len(kst_sma))])

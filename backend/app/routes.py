@@ -1,33 +1,28 @@
 from app import app
 from flask import render_template, flash, redirect, url_for, session, request
 from flask import jsonify
-from app.mocks import *
+import app.mocks as mocks
 
 
 @app.route('/dashboard-dropdown', methods=['GET'])
 def getModelsAndAssets():
-  mockModels = getAllModels()
-  mockAssets = getAllAssetNames()
-  return jsonify({'models': mockModels, 'assets': mockAssets})
+  mockModels = mocks.getAllModels()
+
+  return jsonify({'models': mockModels, 'indicators': sorted([*mocks.indicatorDict])})
 
 
 @app.route('/asset-value-over-time/<string:name>', methods=['GET'])
 def get_description_over_time(name):
-  mock = getAssetValueOverTime(name)
+  mock = mocks.getAssetValueOverTime(name)
   if(len(mock) > 0):
     return jsonify({'data':mock})
   else:
     return jsonify({'ERROR': 'Invalid ticker used'})
 
-@app.route('/model-performance-over-time/<string:modelName>', methods=['GET'])
-def get_model_performance_over_time(modelName):
-  mock = getModelPerformanceOverTime(modelName)
-  return jsonify({'data':mock})
-
 @app.route('/asset-category-description/<string:assetType>/<string:day>', methods=['GET'])
 def get_asset_description(assetType, day):
 
-  mock = getCategoryDescriptionAtDate(assetType, day)
+  mock = mocks.getCategoryDescriptionAtDate(assetType, day)
   
   return jsonify({'data': mock})
 
@@ -38,7 +33,7 @@ def get_asset_description(assetType, day):
 def get_alloc_info():
     print('got here')
     # get most recent day's values across all asset categories
-    testSeries = multiseriesData[0]['series']
+    testSeries = mocks.multiseriesData[0]['series']
     maxDay = testSeries[0]['name']
     for entry in testSeries:
       if entry['name'] > maxDay:
@@ -47,7 +42,7 @@ def get_alloc_info():
 
     mostRecentAllocation = []
 
-    for assetType in multiseriesData:
+    for assetType in mocks.multiseriesData:
       tempDict = {}
       assetName = assetType['name']
       currentSeries = assetType['series']
@@ -61,7 +56,7 @@ def get_alloc_info():
       mostRecentAllocation.append(tempDict)
     print(mostRecentAllocation)
 
-    return jsonify({'data':multiseriesData, 'mostRecent':mostRecentAllocation})
+    return jsonify({'data': mocks.multiseriesData, 'mostRecent':mostRecentAllocation})
 
   
 @app.route('/most-recent-day', methods=['GET'])
@@ -80,32 +75,17 @@ def get_performance_stats(day):
 
   return jsonify({'data':mock})
 
-@app.route('/indicators/<string:name>', methods=['GET'])
-def get_indicators_for_asset(name):
-  mock = {'name': 'idk', 'series': [
-      {
-        "name": 10,
-        "value": 40
-      },
-      {
-        "name": 20,
-        "value": 30
-      },
-      {
-        "name": 30,
-        "value": 30
-      },
-      {
-          "name": 40,
-          "value": 40
-        },
-        {
-          "name": 50,
-          "value": 50
-        },
-        {
-          "name": 60,
-          "value": 60
-        }
-    ]}
-  return jsonify({'data':[mock]})
+
+@app.route('/modelPerformance/<string:model>/<string:equity>', methods=['GET'])
+def get_indicators_for_asset(model, equity):
+  return jsonify({'data': mocks.modelData})
+
+@app.route('/indicators/<string:indicator>/params', methods=['GET'])
+def getNumParams(indicator):
+  test = mocks.indicatorDict
+  return jsonify({'data':test[indicator]})
+
+@app.route('/indicators/<string:indicator>/<string:equity>', methods=['GET'])
+def getIndicatorData(indicator, equity):
+  test = mocks.getIndicatorData(indicator, equity)
+  return jsonify({'data': test})
