@@ -1,9 +1,10 @@
 import sys
 # gives backend app access to modules in algDev by adding directory to pythonpath
 sys.path.insert(1, '../')
-
+import numpy as np
 # gonna have to rewrite this once DB structure in place
 import algDev.API.dataGatherer as dataGatherer
+import algDev.API.indicators as indicators
 
 def getCategoryDescriptionAtDate(asset, date):
     
@@ -399,13 +400,6 @@ funData = [
             }
         ]
 
-def getModelPerformanceOverTime(modelName):
-  data = []
-  for i in range(1,7):
-    tempDict = {'name': i*10}
-    tempDict['value'] = int(modelName[:-1]) * 10
-    data.append(tempDict)
-  return data
 
 def getAssetValueOverTime(name):
   if(len(name) < 5):
@@ -572,3 +566,77 @@ indicatorValues = {
           "value": 60
         }
     ]}
+
+indicatorDict = {
+"SMA": 1,
+"EMA": 1,
+"Wilder MA": 1,
+"MACD": 2,
+"MACDSig": 2,
+"KST": 0,
+"TRIX": 0,
+"KSTTrix": 0,
+"RSI": 0,
+"Prings": 0,
+"OLHC": 0,
+"Rainbow": "n",
+"Oil": 0,
+"SNP": 0,
+"Reit": 0,
+"GOP": 1,
+"BOP": 0,
+"Volumes": 0,
+"Closes": 0,
+"UpperBol": 0,
+"LowerBol": 0,
+"AccumSwing": 0,
+"ATR": 1}
+
+modelData = [{'indicator': indicatorName, 'data':[indicatorValues]} for indicatorName in sorted(indicatorDict.keys())]
+
+mockIndicatorData = [
+          {
+            "name": 0,
+            "value": 40
+          },
+          {
+            "name": 4,
+            "value": 10
+          },
+          {
+            "name": 8,
+            "value": 20
+          },
+          {
+            "name": 12,
+            "value": 30
+          },
+          {
+              "name": 16,
+              "value": 40
+            },
+            {
+              "name": 20,
+              "value": 50
+            }
+        ]
+
+def getIndicatorData(indicatorName, equity):
+  formatted = indicatorName.replace(",", "_")
+  print('indicatorName is ', formatted)
+
+  # FOR NOW - JUST USING LENGTH OF HISTORICAL PRICES DATA TO GET LAST X VALUES
+  numDays = len(dataGatherer.getPrices('AAPL'))
+  test = indicators.get_indicator_value(equity, formatted)
+  print('test data looks like', test)
+  samples = test[:numDays]
+  samples = np.flipud(samples) 
+  samples = [item[0] for item in samples] #unpack it
+
+  print('samples', samples )
+  data = []
+
+  for i in range(len(samples)):
+    data.append({'name': i, 'value': samples[i]}) # reverse the days
+
+  return data

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatChip, MatChipInputEvent, MatChipList, MatError, MatFormField, MatOption, MatPlaceholder, MatSelect } from '@angular/material';
+import { MatChip, MatChipInputEvent, MatChipList, MatError, MatFormField, MatInputModule, MatOption, MatPlaceholder, MatSelect } from '@angular/material';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { DataService } from '../../services/data.service';
@@ -8,7 +8,7 @@ import { DataService } from '../../services/data.service';
 @Component({
   selector: 'app-dashboard-graphs',
   templateUrl: './dashboard-graphs.component.html',
-  styleUrls: ['./dashboard-graphs.component.css']
+  styleUrls: ['./dashboard-graphs.component.css'],
 })
 export class DashboardGraphsComponent implements OnInit {
 
@@ -18,8 +18,13 @@ export class DashboardGraphsComponent implements OnInit {
   models:string[];
   assetData:any[] = [];
   modelData:any[] = [];
-  activeAssets:any[] = [];
-  activeModels:any[] = [];
+  activeModel:string = '';
+  indicators:string[];
+  mostRecentIndicator:string;
+  indicatorSelected:boolean = false;
+  numParams:any;
+  invalidNumParams:boolean = false;
+
   invalidAssetField:boolean = false;
   mostRecentEquity:string;
 
@@ -29,48 +34,80 @@ export class DashboardGraphsComponent implements OnInit {
 
   ngOnInit() {
     this.populateDropdown();
+    this.getAssetData({'value': 'AAPL'})
   }
 
   populateDropdown(){
     this.dataService.getDropdownInfo().subscribe(result => {
+      console.log('dropdown finished populating');
       this.models = result['models'];
+      this.indicators = result['indicators'];
+    })
+    
+  }
+
+  getIndicatorData($event:any){
+    console.log('getIndicatorData event', $event['target']);
+    let formatted = this.mostRecentIndicator;
+
+    if(this.numParams != 0){
+        console.log('using parameters')
+        this.invalidNumParams = false;
+        let params:string = event['target']['value'];
+    
+        if(this.numParams != 'n' && params.split(",").length != this.numParams){
+          this.invalidNumParams = true;
+          return;
+        }
+    
+        // make the textbox blank after parameters have been confirmed
+        event['target']['value'] = '';
+    
+        if(this.mostRecentIndicator){
+          formatted = this.mostRecentIndicator + "," + params;
+        }
+    }
+    console.log('using the parameter', formatted);
+    this.dataService.getCustomIndicatorsInfo(formatted, this.mostRecentEquity).subscribe(result => {
+      this.handleNewGraphData(result, formatted + ' ' + this.mostRecentEquity, 'indicator');
     })
   }
 
-
-  getAssetData($event: MatChipInputEvent){
-    console.log('event just took place')
-    let newValues = $event['value'];
+  getAssetData($event:any){
     let input = $event.input;
     let value = $event.value.toUpperCase();
-
-    // now add them to the array, if no match, then pop up model asking for valid ticker
-    console.log('get asset value over time called with value: ', value);
     if(!value){
       return
     }
-    this.dataService.getAssetValueOverTime(value).subscribe(result => {
-      
-      if(result['data']){
-        this.invalidAssetField = false;
-        if(input){ input.value = ''; }
-        this.mostRecentEquity = value;
-        let data = result['data']
-        let tempObj = {'name': value, 'series': data}
+    this.mostRecentEquity = value;
 
-        console.log('tempObj', tempObj)
+    this.dataService.getAssetValueOverTime(value).subscribe(result => {
+      console.log('result was', result);
+      this.handleNewGraphData(result, value, 'asset');
+      if(input){ input.value = ''; }
+    })
+    
+  }
+
+  handleNewGraphData(result:any, value:string, dataType:string){
+    console.log('result', result);
+    if(result['data']){
+      this.invalidAssetField = false;
+      let tempObjArr = result['data']
+
+      for(let tempObj of tempObjArr){
+        tempObj['type'] = dataType;
         let assetDataCopy = [...this.assetData];
         assetDataCopy.push(tempObj);
         this.assetData = assetDataCopy;
-        
-        // handle updating equity for indicators performance
+      }
+      // handle updating equity for indicators performance
 
-      }
-      else{
-        this.invalidAssetField = true;
-        // handle invalid asset
-      }
-    })
+    }
+    else{
+      this.invalidAssetField = true;
+      // handle invalid asset
+    }
   }
 
   remove(ticker){
@@ -88,20 +125,41 @@ export class DashboardGraphsComponent implements OnInit {
         break;
       }
     }
-    // MAKE SURE SPLICE CORRECTLY MODIFIES THE ARRAY
     assetDataCopy.splice(tickerIndex, 1);
     this.assetData = assetDataCopy;
   }
 
+  loadParameterFields($event){
+    this.indicatorSelected = false;
+    console.log('loadParamterFields called with event', $event);
+    if(!$event['value']){
+      return;
+    }
+    this.mostRecentIndicator = $event['value'];
+    this.dataService.getNumberOfParameters(this.mostRecentIndicator).subscribe(result => {
+      console.log('result from getting params for', this.mostRecentIndicator, result)
+      let number = result['data']
+      this.numParams = number;
+
+      if(number == 0){
+        this.getIndicatorData({})
+        return;
+        console.log('got here, using zero parameters')
+      }
+      this.indicatorSelected = true;
+      console.log('got here, not using zero parameters')
+
+
+    })
+  }
+
   getModelData($event){
-    console.log('event', $event);
+    this.activeModel = '';
 
     let modelName = $event['value'];
-    
-    // this.dataService.getModelPerformanceOverTime(modelName).subscribe(result => {
-    //   // do stuff here
-    // })
+    this.activeModel = modelName;    
   }
+
 
     // ----------- FORMFIELD OPTIONS ---------------
     visible: boolean = true;
