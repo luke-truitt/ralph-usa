@@ -7,6 +7,7 @@ def run_test():
     start_date = datetime.datetime(2019, 1, 13)
     end_date = datetime.datetime(2019, 2, 13)
 
+    ##Need to add asset_strategy and trading_algorithm
     b = Backtest(["AAPL", "AMZN", "BRK.B"], start_date, end_date, pf_value, 500, 'O', 'C', True)
 
     after_value, positions = b.simulate({'lookback_period': 5, 'strategy_upper_threshold': .025, 'strategy_lower_threshold': -0.025}, True)

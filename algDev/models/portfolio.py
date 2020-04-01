@@ -60,10 +60,10 @@ class Portfolio:
         predictions = self.trading_algorithm.predict(date)
         
         ## After that loop, predictions will be 1/0/-1 corresponding to buy/do nothing/short
-        ##Confidence is the output of the model, from which we can calculate expected return
-        ## allocations will be a decimal indicating how much of our available cash we should give to that
+        ## Confidence is the output of the model, from which we can calculate expected return
+        ## Allocations will be a decimal indicating how much of our available cash we should give to that
         
-        ## for first try, we will just ignore allocation, but this should turn allcations into dollar amounts
+        ## For first try, we will just ignore allocation, but this should turn allcations into dollar amounts
         allocations = self.asset_strategy(date, positions, predictions, verbose) * self.free_cash[date]
                 
         for i, pos in enumerate(self.positions):
