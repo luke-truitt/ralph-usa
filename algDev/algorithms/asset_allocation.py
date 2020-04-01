@@ -23,7 +23,7 @@ class AssetAllocation:
         elif pred_val == -1:
             threshold = self.lower_threshold
         
-        ##ISSUE HERE IS THAT EXPECTED RETURN IS CAPPED AT THRESHOLD (condiser multiplying is by 2)
+        ##ISSUE HERE IS THAT EXPECTED RETURN IS CAPPED AT THRESHOLD (condiser multiplying it by 2)
         return pred_conf * threshold
     
     ##UPDATE THIS
@@ -65,9 +65,4 @@ class AssetAllocation:
     def get_cov_arr(self, date, positions):
         DC_arr = self.get_DC_arr(date, positions)
         cov_arr = np.cov(DC_arr)
-        #for i in range(0, len(self.positions)):
-        #    eq1 = self.positions[i].eq
-        #    for j in range(0, len(self.positions)):
-        #        eq2 = self.positions[j].eq
-        #        self.cov_arr[i, j] = Finance.covariance(eq1, eq2, init_date, days, start, stop)
         return cov_arr
