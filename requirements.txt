@@ -13,6 +13,8 @@ keras
 python-dotenv
 unipath
 graphviz
+psycopg2
+openpyxl
 pydot
 pydotplus
 sklearn
