@@ -32,6 +32,13 @@ class Portfolio:
         self.trading_algorithm = trading_algorithm
         self.asset_strategy = asset_strategy
 
+                self.close_types = [
+        'threshold',
+        'daily'
+        ]
+        assert asset_strategy.type in self.close_types
+
+
     def init_positions(self, eqs, init_date, days = 500, verbose=False):
         here = os.path.abspath(os.path.dirname(__file__))
         data_directory = os.path.join(here, '..\\data')
@@ -51,9 +58,10 @@ class Portfolio:
 
     def realloc(self, date, verbose=False):
 
-        ##ASK LUKE ABOUT THIS LINE
+        #DISCUSS WITH LUKE: Just need clarity on exactly what this line is doing
         self.free_cash[date] = self.free_cash[list(self.free_cash.keys())[len(self.free_cash.keys())-1]]
-        
+
+        #DISCUSS WITH LUKE: Move to end of realloc so that all closings are being handled during the trading day
         self.update_closings(self.trading_algorithm.getPeriod(), self.trading_algorithm.getUpperThreshold(), self.trading_algorithm.getLowerThreshold(), date, verbose)
 
         # Dictionary of tickers and tuples of prediction and confidence
@@ -71,7 +79,7 @@ class Portfolio:
         if verbose is True:
             print("Current Free Cash: ", self.free_cash[date])
             print("Current Positions Value: ", self.getValue(date) - self.free_cash[date])
-
+        
         self.trading_algorithm.update()
         return self.update(verbose)
 
@@ -82,7 +90,7 @@ class Portfolio:
 
         for i, pos in enumerate(self.positions):
         
-            self.free_cash[date] += pos.handle_closings(self.trading_algorithm.params, date, verbose)
+            self.free_cash[date] += pos.handle_closings(self.trading_algorithm.params, date, self.asset_strategy.type, verbose)
         
     def date_ob(self, date, verbose=False):
 
