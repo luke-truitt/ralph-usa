@@ -51,25 +51,26 @@ class Portfolio:
 
     def realloc(self, date, verbose=False):
 
+        ##ASK LUKE ABOUT THIS LINE
         self.free_cash[date] = self.free_cash[list(self.free_cash.keys())[len(self.free_cash.keys())-1]]
+        
+        self.update_closings(self.trading_algorithm.getPeriod(), self.trading_algorithm.getUpperThreshold(), self.trading_algorithm.getLowerThreshold(), date, verbose)
 
         # Dictionary of tickers and tuples of prediction and confidence
         predictions = self.trading_algorithm.predict(date)
         
         ## After that loop, predictions will be 1/0/-1 corresponding to buy/do nothing/short
-        ## Confidence is the output of the model, from which we can calculate expected return
-        ## Allocations will be a decimal indicating how much of our available cash we should give to that
+        ##Confidence is the output of the model, from which we can calculate expected return
+        ## allocations will be a decimal indicating how much of our available cash we should give to that
         
-        ## For first try, we will just ignore allocation, but this should turn allcations into dollar amounts
-        allocations = self.asset_strategy.allocate(date, self.positions, predictions, verbose) * self.free_cash[date]
+        ## for first try, we will just ignore allocation, but this should turn allcations into dollar amounts
+        allocations = self.asset_strategy(date, positions, predictions, verbose) * self.free_cash[date]
                 
         for i, pos in enumerate(self.positions):
             self.free_cash[date] -= pos.purchase(predictions[i], allocations[i], date, verbose)
         if verbose is True:
             print("Current Free Cash: ", self.free_cash[date])
             print("Current Positions Value: ", self.getValue(date) - self.free_cash[date])
-
-        self.update_closings(date, verbose)
 
         self.trading_algorithm.update()
         return self.update(verbose)

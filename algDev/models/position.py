@@ -11,21 +11,27 @@ class Position:
     ##CHANGE TO ACCOMODATE SHORTING
     def purchase(self, prediction, allocation, today,verbose=False):
         if verbose:
-            print("Checking purchase: ",prediction)
+            print("Checking purchase:",prediction)
             print("Allocation:", allocation)
 
-        #if prediction == 0:
-        #    return 0
+        if prediction == 0:
+            return 0
 
+        #if prediction > 0:
+        #    if verbose:
+        #        print("Making purchase: ", allocation)
+        #    left_over = self.trade_value(allocation, today, verbose)
         left_over = self.trade_value(allocation, today, verbose)
+        #    return allocation - left_over
         return allocation - left_over
+        #return 0
         
     def trade_shares(self, num_shares, date,verbose=False):
         self.trades.append(Trade(date, num_shares))
 
     def trade_value(self, amt, date,verbose=False):
         day_open = self.eq.get_price(date, 'o')
-        print("Open Price: ", day_open)
+        print(day_open)
         num_shares = int(amt/day_open)
         total_purchased = num_shares * day_open
         left_over = amt - total_purchased

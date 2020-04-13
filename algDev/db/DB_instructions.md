@@ -3,6 +3,9 @@ Our database is hosted on Google Cloud, so before setting up a local client conn
 
 Once you've downloaded that, initialize the tool with `gcloud init` and authenticate into FML's Google Cloud account by running  `gcloud auth login` and signing in on your browser.
 
+#financialmlpartners@gmail.com
+#daddyluke123
+
 ### Setting up the Proxy
 For mac, WHILE IN THE `backend/db` directory, run the following command to download the proxy into the correct location:
 `curl -o cloud_sql_proxy https://dl.google.com/cloudsql/cloud_sql_proxy.darwin.amd64`
@@ -19,7 +22,7 @@ Ready for new connections
 ### Connecting to the DB
 Since we're using a Python backend, we'll be using the psycopg2 module, which is most commonly used to interface between Python and a PostgreSQL database. (see a pretty handy tutorial here: https://pynative.com/python-postgresql-insert-update-delete-table-data-to-perform-crud-operations/#Python_PostgreSQL_INSERT_into_database_Table)
 
-The most important thing is to, before you connect to the database, ensure that you have the correct credentials to do so. In the db folder in the backend, duplicate the `credentials.prod` file and rename it to `credentials.py`. Then, replace the fake/temporary values with the values that I give you. 
+The most important thing is to, before you connect to the database, ensure that you have the correct credentials to do so. In the db folder in the backend, duplicate the `credentials.prod` file and rename it to `credentials.py`. Then, replace the fake/temporary values with the values that I, Jaiveer (jay - vEEr), give you. 
 
 Once you've done that, you can import the credentials and connect to the db WHILE THE PROXY IS RUNNING. You won't be able to connect to the database unless the proxy is running. Both the primer script and the tutorial linked above are two examples that show how to run SQL queries on the DB, the most important of which is to actually connect to the client from your script:
 `conn = psycopg2.connect(host="localhost",database="postgres", user=credentials.username, password=credentials.password)`

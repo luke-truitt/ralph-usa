@@ -9,7 +9,7 @@ class ModelCollection:
     Returns:
         ModelCollection -- object for storing and testing models
     """
-    def __init__(self, ticker, type, features, params):
+    def __init__(self, ticker, type, features=[], params=None, models=None):
         """initialize model collection
         
         Arguments:
@@ -24,10 +24,15 @@ class ModelCollection:
                                     cnn_split: number of cnns to use if necessary
         """
         self.eq = Equity(ticker)
+        self.ticker = ticker
         self.features = data_generator.parse_features(features)
         self.type = type
         self.params = params
-        self.models = self.init_models()
+        if len(models) > 0:
+            self.models = models
+        else:
+            assert(len(features)>0)
+            self.models = self.init_models()
         self.accuracy = 0.0
         
     def init_models(self):
@@ -77,6 +82,10 @@ class ModelCollection:
         for model in self.models:
             model.plot_roc(verbose)
 
+    def get_conf_matricies(self, verbose=False):
+        for model in self.models:
+            model.build_conf_matrix(self.params['data_splits'])
+
     def update_accuracy(self):
         """Update the accuracy of the entire collection by averaging the
             individual accuracies, could probably be done better
@@ -86,4 +95,23 @@ class ModelCollection:
             acc += model.metrics['acc']
 
         self.accuracy = acc/len(self.models)
+
+    def predict(self, date, verbose=False):
+        if verbose:
+            print(date)
+        start_index = self.eq.get_index_from_date(date)
+        end_index = start_index + self.params['length']
+
+        predictions = []
+        if self.type=='cnn':
+            X_i = data_generator.get_subset(self.eq, self.features, start_index, end_index, self.type)
+            for model in self.models:
+                predictions.append(model.predict(X_i))
+        elif self.type=='svm':
+            for i,f in enumerate(self.features):
+                X_i = data_generator.get_subset(self.eq, [f], start_index, end_index, self.type)
+                predictions.append(self.models[i].predict(X_i))
         
+        return predictions
+
+    

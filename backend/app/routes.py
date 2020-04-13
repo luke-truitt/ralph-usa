@@ -11,13 +11,14 @@ def getModelsAndAssets():
   return jsonify({'models': mockModels, 'indicators': sorted([*mocks.indicatorDict])})
 
 
-@app.route('/asset-value-over-time/<string:name>', methods=['GET'])
-def get_description_over_time(name):
-  mock = mocks.getAssetValueOverTime(name)
-  if(len(mock) > 0):
-    return jsonify({'data':mock})
-  else:
+@app.route('/asset-value-over-time/<string:name>/<string:period>', methods=['GET'])
+def get_description_over_time(name, period):
+  assetData = mocks.getAssetValueOverTime(name, period)
+  if(assetData == "ERROR"):
     return jsonify({'ERROR': 'Invalid ticker used'})
+  else:
+    return jsonify({'data':assetData})
+
 
 @app.route('/asset-category-description/<string:assetType>/<string:day>', methods=['GET'])
 def get_asset_description(assetType, day):
@@ -85,7 +86,12 @@ def getNumParams(indicator):
   test = mocks.indicatorDict
   return jsonify({'data':test[indicator]})
 
-@app.route('/indicators/<string:indicator>/<string:equity>', methods=['GET'])
-def getIndicatorData(indicator, equity):
-  test = mocks.getIndicatorData(indicator, equity)
+@app.route('/indicators/<string:formatted>/<string:equity>', methods=['GET'])
+def getIndicatorData(formatted, equity):
+  test = mocks.getIndicatorData(formatted, equity)
   return jsonify({'data': test})
+
+@app.route('/assets/top', methods=['GET'])
+def getTopAssets():
+  result = mocks.getTopAssets()
+  return jsonify({'data': result})
