@@ -1,7 +1,7 @@
 ### Downloading and Setting up Google Cloud CLI
 Our database is hosted on Google Cloud, so before setting up a local client connection to the DB, you'll need to install the Google Cloud command line tool from here: https://cloud.google.com/sdk/docs#install_the_latest_cloud_sdk_version 
 
-Once you've downloaded that, initialize the tool with `gcloud init` and authenticate into FML's Google Cloud account by running  `gcloud auth login` and signing in on your browser.
+Once you've downloaded that, initialize the tool with `gcloud init` and authenticate into Ralph USA's Google Cloud account by running  `gcloud auth login` and signing in on your browser.
 
 #financialmlpartners@gmail.com
 #daddyluke123
