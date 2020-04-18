@@ -26,8 +26,6 @@ import { TickerComponent } from './components/ticker/ticker.component';
 import { BacktesterComponent } from './components/backtester/backtester.component';
 import { BacktesterDialogComponent } from './components/backtester-dialog/backtester-dialog.component';
 
-
-
 @NgModule({
   declarations: [
     AppComponent,
