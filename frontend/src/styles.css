@@ -17,8 +17,23 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .mat-select-value{
     color: #DDDDDD;
 }
+.mat-expansion-panel{
+    background-color: #222222;
+    color: #DDDDDD;
+}
+/* 
+.mat-expansion-panel-header.mat-expanded {
+    background: #222222;
+    color: #dddddd;
+  } */
 
 .mat-toolbar.mat-primary{background:#222222;color:#dddddd}
+
+.mat-dialog-container{
+    background:#222222; 
+    color: #dddddd;
+    box-shadow: 0 0 15px #000000;
+}
 
 .mat-form-field-underline {
  /*change color of underline*/
@@ -27,10 +42,68 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .mat-form-field-ripple {
  /*change color of underline when focused*/
- background-color: blue !important;;
+ background-color: #EF6F6C !important;;
 }
+
+mat-datepicker-toggle {
+    color: #DDDDDD !important;
+   }
 
 .mat-form-field-label {
     color: #DDDDDD !important;
+}
+
+.mat-progress-spinner circle, .mat-spinner circle {
+    stroke: #DDDDDD;
+    }
+
+/* Calendar stuff */
+.mat-calendar-body-cell-content{
+    color: #DDDDDD;
+}
+
+.mat-calendar-body-label {
+    color: #DDDDDD;
+}
+
+.mat-calendar-table-header{
+    color: #DDDDDD;
+}
+
+.mat-button{
+    color: #DDDDDD;
+}
+
+.mat-calendar-arrow{
+    color: #DDDDDD;
+}
+
+.mat-datepicker-content .mat-calendar-next-button, .mat-datepicker-content .mat-calendar-previous-button, .mat-datepicker-toggle{
+    color: #DDDDDD;
+}
+
+.mat-button.mat-accent[disabled], .mat-button.mat-primary[disabled], .mat-button.mat-warn[disabled], .mat-button[disabled][disabled], .mat-icon-button.mat-accent[disabled], .mat-icon-button.mat-primary[disabled], .mat-icon-button.mat-warn[disabled], .mat-icon-button[disabled][disabled], .mat-stroked-button.mat-accent[disabled], .mat-stroked-button.mat-primary[disabled], .mat-stroked-button.mat-warn[disabled], .mat-stroked-button[disabled][disabled]{
+    color: rgba(221, 221, 221, 0.5);
+}
+
+.mat-calendar-body-disabled>.mat-calendar-body-cell-content:not(.mat-calendar-body-selected){
+    color: rgba(221, 221, 221, 0.5)
+}
+
+.mat-calendar-body-disabled>.mat-calendar-body-today:not(.mat-calendar-body-selected){
+    color: rgba(221, 221, 221, 0.5)
+
+}
+
+.mat-calendar-body-selected{
+    background-color: #7fc6b8c4;
+}
+
+.cdk-keyboard-focused .mat-calendar-body-active>.mat-calendar-body-cell-content:not(.mat-calendar-body-selected), .cdk-program-focused .mat-calendar-body-active>.mat-calendar-body-cell-content:not(.mat-calendar-body-selected), .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover>.mat-calendar-body-cell-content:not(.mat-calendar-body-selected) {
+    color: #7FC6B8;
+}
+
+.mat-datepicker-content{
+    background-color: #222222;
 }
 
