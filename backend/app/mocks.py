@@ -6,6 +6,7 @@ import numpy as np
 import algDev.API.dataGatherer as dataGatherer
 import algDev.API.indicators as indicators
 import algDev.db.wrapper as wrapper
+# import algDev.API.models as models
 
 
 def getCategoryDescriptionAtDate(asset, date):
@@ -671,33 +672,40 @@ def getTopAssets():
   changes = []
 
   for asset in allAssets:
-    print('current asset', asset)
     data = dataGatherer.getPrices(asset, "5d")
-
-    print('data in top assets is', data)
 
     firstObj = data[0]
     lastObj = data[len(data)-1]
 
     totalChange = lastObj['value'] - firstObj['value']
     percentChange = (totalChange/firstObj['value']) * 100
-    print('percentChange is', percentChange)
-    changes.append((percentChange, asset))
+    changes.append((round(percentChange, 3), asset))
 
   changes.sort()
 
+  tempResult = []
   finalResult = []
 
   for item in changes[-3:]:
     tempDict = {'percentChange': item[0], 'asset': item[1], 'type': 'top'} 
-    finalResult.append(tempDict)
+    tempResult.append(tempDict)
 
   for item in changes[:3]:
     tempDict = {'percentChange': item[0], 'asset': item[1], 'type': 'bottom'} 
-    finalResult.append(tempDict)
+    tempResult.append(tempDict)
+  
 
-  return finalResult
+  return tempResult
 
+def getBacktesterDates():
+  print('get here')
+  dbStartDate = wrapper.getFirstDate()
+  dbEndDate = wrapper.getMostRecentDate()
+  toReturn = {'firstDate': dbStartDate, 'endDate': dbEndDate}
+  return toReturn
 
   
+# def getTradingAlgorithms():
+#   tradingAlgs = models.getTradingAlgorithms()
+#   return tradingAlgs # LOOK INTO THIS SHIT MORE
 

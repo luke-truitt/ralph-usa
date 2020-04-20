@@ -32,7 +32,7 @@ class Portfolio:
         self.trading_algorithm = trading_algorithm
         self.asset_strategy = asset_strategy
 
-                self.close_types = [
+        self.close_types = [
         'threshold',
         'daily'
         ]
