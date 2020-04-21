@@ -114,7 +114,7 @@ class Position:
                     print("Bought at: ", self.eq.get_price(pur_date, 'o'))
                     print("Sold at: ", self.eq.get_price(today, 'c'))
                 cash += trade.num_shares * self.eq.get_price(today, 'c', verbose)
-                    self.trades[i] = trade.sell(today, verbose)
+                self.trades[i] = trade.sell(today, verbose)
 
         if verbose:
             print("Trades:",self.trades)

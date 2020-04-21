@@ -13,6 +13,19 @@ import { DataService } from '../../services/data.service';
   styleUrls: ['./backtester-dialog.component.css']
 })
 export class BacktesterDialogComponent implements OnInit {
+
+  fullName:string;
+  birthDate:Date;
+  retirementDate:Date;
+  targetReturn:number;
+
+  closingStrategy:any[] = [
+    {value:'threshold', viewValue:'Sell When Thresholds are Reached'},
+    {value:'daily', viewValue:'Sell Everyday at Close'}
+  ];
+
+  selectedClosingStrategy:string;
+
   startDate:Date;
   endDate:Date;
   portfolioValue:number;
@@ -70,6 +83,16 @@ export class BacktesterDialogComponent implements OnInit {
     this.dialogRef.close({'startDate': this.startDate, 'endDate': this.endDate, 'portfolioValue': this.portfolioValue, 'model': this.selectedModel})
   }
 
+  updateBirthDate($event){
+    this.inputError = false;
+    this.birthDate = new Date($event['value']);
+  }
+
+  updateRetireDate($event){
+    this.inputError = false;
+    this.retirementDate = new Date($event['value']);
+  }
+
   updateStartDate($event){
     this.inputError = false;
     this.startDate = new Date($event['value']);
@@ -84,6 +107,11 @@ export class BacktesterDialogComponent implements OnInit {
   updateModel($event){
     this.inputError = false;
     this.selectedModel = $event['value'];
+  }
+
+  updateCloseType($event){
+    this.inputError = false;
+    this.selectedClosingStrategy = $event['value'];
   }
 
   subtractDays(date:Date, days:number){ 

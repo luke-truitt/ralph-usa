@@ -53,7 +53,7 @@ export class BacktesterComponent implements OnInit {
       this.isLoading = false;
       console.log('opened');
       const dialogRef = this.dialog.open(BacktesterDialogComponent, {
-        width: '250px',
+        width: '350px',
         hasBackdrop:false,
         data: result
       });

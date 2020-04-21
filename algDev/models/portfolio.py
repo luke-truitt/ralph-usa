@@ -62,8 +62,7 @@ class Portfolio:
         self.free_cash[date] = self.free_cash[list(self.free_cash.keys())[len(self.free_cash.keys())-1]]
 
         #DISCUSS WITH LUKE: Move to end of realloc so that all closings are being handled during the trading day
-        self.update_closings(self.trading_algorithm.getPeriod(), self.trading_algorithm.getUpperThreshold(), self.trading_algorithm.getLowerThreshold(), date, verbose)
-
+        
         # Dictionary of tickers and tuples of prediction and confidence
         predictions = self.trading_algorithm.predict(date)
         
@@ -81,6 +80,7 @@ class Portfolio:
             print("Current Positions Value: ", self.getValue(date) - self.free_cash[date])
         
         self.trading_algorithm.update()
+        self.update_closings(self.trading_algorithm.getPeriod(), self.trading_algorithm.getUpperThreshold(), self.trading_algorithm.getLowerThreshold(), date, verbose)
         return self.update(verbose)
 
     def update(self, verbose=False):
