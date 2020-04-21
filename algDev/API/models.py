@@ -10,7 +10,7 @@ from algDev.algorithms.asset_allocation import AssetAllocation
 import pickle
 
 def loadModelCollection(modelCollectionId):
-    model_collection = db_wrapper.loadModelCollection()[0]
+    model_collection = db_wrapper.loadModelCollection(modelCollectionId)
     ticker = model_collection[1]
     modelIds = model_collection[2]
     length = model_collection[3]
@@ -44,24 +44,37 @@ def loadModelCollection(modelCollectionId):
 
 def loadTradingAlgorithm(tradingAlgorithmId):
 
-    tradingAlgResult = db_wrapper.getTradingAlgorithm(tradingAlgorithmId)[0]
+    tradingAlgResult = db_wrapper.getTradingAlgorithm(tradingAlgorithmId)
+    
     tickers = tradingAlgResult[1].split(',')
-    modelCollectionIds = tradingAlgResult[1].split(',')
-    votingType = tradingAlgResult[2]
+    features = tradingAlgResult[2].split(',')
+    length = tradingAlgResult[3]
+    upper_threshold = tradingAlgResult[4]
+    lower_threshold = tradingAlgResult[5]
+    period = tradingAlgResult[6]
+    modelCollectionIds = tradingAlgResult[7].split(',')
+    votingType = tradingAlgResult[8]
     mcs = []
     for modelCollectionId in modelCollectionIds:
         mc = loadModelCollection(modelCollectionId)
         mcs.append(mc)
     model_mc = mcs[0]
     features = model_mc.features
-    type = model_mc.type
-    length = model_mc.params['length']
-    upper_threshold = model_mc.params['upper_threshold']
-    lower_threshold = model_mc.params['lower_threshold']
-    period = model_mc.params['period']
-    ta = TradingAlgorithm(tickers=tickers, features=features, type=type, data_lookback_period=length, label_upper_threshold=upper_threshold, label_lower_threshold=lower_threshold, label_period=period, voting_type=votingType, models = mcs)
+    t = model_mc.type
+    
+    ta = TradingAlgorithm(tickers=tickers, features=features, type=t, data_lookback_period=length, label_upper_threshold=upper_threshold, label_lower_threshold=lower_threshold, label_period=period, voting_type=votingType, models = mcs)
 
     return ta
+
+def getTradingAlgorithms():
+    tas = db_wrapper.getTradingAlgorithms()
+
+    trading_algorithms = []
+    for ta in tas:
+        trading_algorithms.append(loadTradingAlgorithm(ta[0]))
+    
+    return trading_algorithms
+
 
 def getModels(ticker):
     

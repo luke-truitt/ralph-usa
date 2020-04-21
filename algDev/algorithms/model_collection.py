@@ -9,7 +9,7 @@ class ModelCollection:
     Returns:
         ModelCollection -- object for storing and testing models
     """
-    def __init__(self, ticker, type, features=[], params=None, models=[]):
+    def __init__(self, ticker, type, features=[], params=None, models=[], model_params =None):
         """initialize model collection
         
         Arguments:
@@ -28,6 +28,7 @@ class ModelCollection:
         self.features = data_generator.parse_features(features)
         self.type = type
         self.params = params
+        self.model_params = model_params
         if len(models) > 0:
             self.models = models
         else:
@@ -50,7 +51,7 @@ class ModelCollection:
             for feature in self.features:
                 X,y = data_generator.gen_svm_data(self.eq, [feature], self.params['length'], self.params['upper_threshold'], self.params['period'])
                 
-                models.append(SVM(X,y,title=feature))
+                models.append(SVM(X,y,title=feature, params= self.model_params))
         return models
 
     def update_params(self, params):
@@ -83,9 +84,13 @@ class ModelCollection:
             model.plot_roc(verbose)
 
     def get_conf_matricies(self, verbose=False):
+        cm_list =[]
         for model in self.models:
-            model.build_conf_matrix(self.params['data_splits'])
+            cm = model.build_conf_matrix(self.params['data_splits'])
+            cm_list.append(cm)
 
+        return cm_list
+        
     def update_accuracy(self):
         """Update the accuracy of the entire collection by averaging the
             individual accuracies, could probably be done better
@@ -113,5 +118,10 @@ class ModelCollection:
                 predictions.append(self.models[i].predict(X_i))
         
         return predictions
+
+    def grid_search_coll(self, verbose=False):
+        for model in self.models:
+            model.grid_search_model(verbose)
+
 
     

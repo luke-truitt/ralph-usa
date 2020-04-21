@@ -9,18 +9,17 @@ import os
 ### Simulate the success of a model or trading strategy
 class Backtest():
 
-    def __init__(self, eqs, trading_algorithm, asset_strategy, start_date, end_date, portfolio_value, verbose=False):
+    def __init__(self, trading_algorithm, asset_strategy, start_date, end_date, portfolio_value, verbose=False):
         super().__init__()
         
         self.today = start_date
         self.value = portfolio_value
         self.end_date = end_date
-        self.eqs = eqs
-
+        self.start_date = start_date
         self.asset_strategy = asset_strategy
         self.trading_algorithm = trading_algorithm
 
-        self.portfolio = Portfolio(self.value, self.eqs, self.today, self.trading_algorithm, self.asset_strategy, verbose)
+        self.portfolio = Portfolio(self.value, self.today, self.trading_algorithm, self.asset_strategy, verbose)
 
     def step(self, verbose=False):
         start = time.perf_counter()
@@ -41,8 +40,79 @@ class Backtest():
 
             print(self.portfolio.getValue(final_day, True))
 
-        return self.portfolio.getValue(final_day), self.portfolio.positions
+        return self.get_relevant_information()
 
+    def get_relevant_information(self):
+        rtn = self.get_return()
+        snp_rtn = self.get_snp_return()
+        net_rtn = self.get_net_rtn()
+
+        avg_free_cash = self.get_avg_free_cash()
+
+        beta = self.get_beta()
+        vol = self.get_vol()
+
+        treynor = self.get_treynor()
+        sharpe = self.get_sharpe()
+
+        dates, pf_vals, initial_val, snp_vals = self.get_pf_values()
+
+        return_val = {'return':rtn, 'snp_rtn':snp_rtn, 'net_rtn':net_rtn, 'average_free_cash':avg_free_cash, 'beta': beta, 'vol':vol, 'treynor':treynor, 'sharpe':sharpe, 'dates':dates, 'pf_vals':pf_vals, 'initial_val':initial_val, 'snp_vals':snp_vals, 'positions':self.portfolio.positions}
+
+        return return_val
+    def get_pf_values(self):
+
+        day_diff = (self.end_date - self.start_date).days
+        vals = []
+        initial_val = []
+        dates = []
+        snp = []
+        
+        sp = Equity('SNP')
+        for i in range(day_diff):
+            i_day = datetime.timedelta(days=i)
+            dates.append(self.start_date + i_day)
+            vals.append(self.portfolio.getValue(self.start_date + i_day))
+            initial_val.append(self.value)
+            snp.append(sp.get_price(self.start_date + i_day))
+
+        return dates, vals, initial_val, snp
+
+    def get_snp_return(self):
+        return 1.0
+    def get_avg_free_cash(self):
+        return 1.0
+    def get_net_rtn(self):
+        rtn = self.get_return()
+        snp_rtn = self.get_snp_return()
+
+        return rtn-snp_rtn
+
+    def get_vol(self):
+
+        return 1.0
+
+    def get_sharpe(self):
+        vol = self.get_vol()
+        rtn = self.get_return()
+
+        return rtn/vol
+
+    def get_beta(self):
+        beta = 1.0
+
+        return beta
+
+    def get_treynor(self):
+        beta = self.get_beta()
+        rtn = self.get_return()
+
+        return rtn/beta
+
+    def get_return(self):
+
+        return 1.0
+    
     def plot_value(self, initial_value, start_date, end_date):
 
         day_diff = (end_date - start_date).days

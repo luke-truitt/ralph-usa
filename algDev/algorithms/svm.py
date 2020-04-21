@@ -7,6 +7,13 @@ import numpy as np
 from sklearn.metrics import auc
 from sklearn.metrics import plot_roc_curve
 from sklearn.model_selection import StratifiedKFold
+
+from matplotlib.colors import Normalize
+from sklearn.svm import SVC
+from sklearn.preprocessing import StandardScaler
+from sklearn.datasets import load_iris
+from sklearn.model_selection import StratifiedShuffleSplit
+from sklearn.model_selection import GridSearchCV
 #this is the file for running all versions of svm-model based voting algorithms
 
 #20-50 svm models 
@@ -19,7 +26,7 @@ class SVM:
     Returns:
         SVM -- SVM with model and data
     """
-    def __init__(self, X=None, y=None, C=1, gamma="auto", title='default',model = None, metrics = {}, ):
+    def __init__(self, X=None, y=None, params = None, title='default',model = None, metrics = {}, ):
         """Initialize SVM
         
         Arguments:
@@ -28,13 +35,24 @@ class SVM:
         
         Keyword Arguments:
             C {int} -- error penalty (default: {1})
-            gamma {str} -- kernal parameter (default: {'auto'})
-            title {str} -- name of model (default: {'default'})
+            params {dict} -- dictionary of parameters below, if None default values are used
+                gamma {str} -- kernal parameter (default: {'auto'}, if not auto or scale - not str)
+                C {int} -- 
+                title {str} -- name of model (default: {'default'})
+            
         """
+        if not bool(params) == True:
+            gamma = 'auto'
+            C = 1
+        else:
+            gamma = params['gamma']
+            C = params['C']
+
         if model:
             self.model = model
         else:
             self.model = svm.SVC(C=C, gamma=gamma, probability=True)
+        
         self.data = {'features':X, 'labels':y}
         self.title = title
         
@@ -57,7 +75,9 @@ class SVM:
             pred = int(pred)
             cm.add_value(true, pred)
 
-        cm.print_matrix()
+        matrix = cm.print_matrix()
+
+        return matrix
 
     def train(self, splits, X=None, y=None, verbose=False):
         """train the svm
@@ -73,8 +93,8 @@ class SVM:
         if not X or not y:
             X = self.data['features']
             y = self.data['labels']
-        
         X_train, y_train, X_test, y_test = split_data(X, y, splits)
+        
         if verbose:
             print("Feature Shape for SVM ", self.title)
             print(X_train.shape)
@@ -82,7 +102,8 @@ class SVM:
             print(y_train.shape)
 
         self.model.fit(X_train, y_train)
-
+        if len(X_test) <= 0:
+            return
         self.test(X_test, y_test, verbose)
 
     def test(self, X, y, verbose = False):
@@ -149,3 +170,28 @@ class SVM:
         pred = self.model.predict(Xi)
         
         return pred[0]
+
+
+    def grid_search_model(self, verbose = False):
+        #DATA
+        X = self.data['features']
+        y = self.data['labels']
+
+        #grid search for values of C, gamma
+        # C_range = np.logspace(-2, 10, 13)
+        # gamma_range = np.logspace(-9, 3, 13)
+
+        C_range = np.logspace(-2, 1,2)
+        gamma_range = np.logspace(-2, 1, 2)
+        param_grid = dict(gamma=gamma_range, C=C_range)
+        cv = StratifiedShuffleSplit(n_splits=5, test_size=0.2, random_state=42)
+        grid = GridSearchCV(SVC(), param_grid=param_grid, cv=cv)
+        grid.fit(X, y)
+
+        if verbose == True:
+            print("The best parameters are %s with a score of %0.2f"
+                % (grid.best_params_, grid.best_score_))
+        
+        return (grid.best_params_, grid.best_score_)
+    
+
