@@ -48,16 +48,8 @@ class Portfolio:
     def realloc(self, date, verbose=False):
 
         ##ASK LUKE ABOUT THIS LINE
-        self.free_cash[date] = self.free_cash[list(self.free_cash.keys())[len(self.free_cash.keys())-1]]
-<<<<<<< HEAD
-
-        #DISCUSS WITH LUKE: Move to end of realloc so that all closings are being handled during the trading day
+        self.free_cash[date] = self.free_cash[list(self.free_cash.keys())[len(self.free_cash.keys())-1]]   
         
-=======
-        
-        self.update_closings(date, verbose)
-
->>>>>>> 752566d8adc061852192b59b904e9c9dd31db13d
         # Dictionary of tickers and tuples of prediction and confidence
         predictions = self.trading_algorithm.predict(date)
         
@@ -73,14 +65,10 @@ class Portfolio:
         if verbose is True:
             print("Current Free Cash: ", self.free_cash[date])
             print("Current Positions Value: ", self.getValue(date) - self.free_cash[date])
-<<<<<<< HEAD
         
         self.trading_algorithm.update()
-        self.update_closings(self.trading_algorithm.getPeriod(), self.trading_algorithm.getUpperThreshold(), self.trading_algorithm.getLowerThreshold(), date, verbose)
-=======
-
-        self.trading_algorithm.update(date)
->>>>>>> 752566d8adc061852192b59b904e9c9dd31db13d
+        self.update_closings(date, verbose) ##ADD CLOSING STRATEGY
+        
         return self.update(verbose)
 
     def update(self, verbose=False):
