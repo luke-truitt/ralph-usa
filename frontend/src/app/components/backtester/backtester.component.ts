@@ -27,6 +27,12 @@ export class BacktesterComponent implements OnInit {
   positions:any[];
   performanceStats:any[];
 
+  birthDate:Date;
+  retirementDate:Date;
+  targetReturn:number;
+  closingStrategy:string;
+  fullName:string;
+
   selectedPositions:any[];
   minVizDate:Date = new Date('2018-01-01');
   maxVizDate:Date = new Date();
@@ -62,6 +68,13 @@ export class BacktesterComponent implements OnInit {
         if(params){
           this.startDate = params['startDate'];
           this.endDate = params['endDate'];
+
+          this.fullName = params['name'];
+          this.retirementDate = params['retirementDate']
+          this.birthDate = params['birthDate']
+          this.targetReturn = params['target_return']
+          this.closingStrategy = params['closing_strategy']
+
           this.maxStartDate = new Date(this.endDate.getTime() - 24*60*60*1000);
           this.showButton = false;
           this.isLoading = true;
@@ -73,9 +86,8 @@ export class BacktesterComponent implements OnInit {
             this.positions = result['positions'];
             this.performanceStats =  result['stats'];
             this.portfolioValues = result['portfolioValues'];
-          })
-        }
-        else{
+          });
+        } else {
           this.showButton = true;
         }
 

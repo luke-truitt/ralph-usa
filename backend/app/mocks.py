@@ -483,7 +483,7 @@ multiseriesData = [
       },
     
       {
-        "name": "Latvian Brothels",
+        "name": "Indicies",
         "series": [
           {
             "name": 10,
@@ -731,11 +731,11 @@ def getTradingAlgorithms():
 
 
 
-def runBacktester(start, end, portfolioValue, algID):
+def runBacktester(start, end, portfolioValue, algID, target_return, closing_strategy):
   startDate = toDate(start)
   endDate = toDate(end)
   
-  result = backtest.run_backtest(startDate, endDate, portfolioValue, algID)
+  result = backtest.run_backtest(startDate, endDate, portfolioValue, algID, target_return, closing_strategy)
   print('backtester result was', result)
   return result
 

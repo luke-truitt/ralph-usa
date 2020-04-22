@@ -9,6 +9,17 @@ class Position:
         self.init_date = init_date
         self.trades = []
 
+    def get_trades_dictionary(self):
+        ts = []
+        for t in self.trades:
+            if t.sold:
+                sell_date = None
+            else:
+                sell_date = t.date_sold
+            ts.append({'datePurchased': t.date_purchased, 'numShares': t.num_shares,'sold': t.sold, 'dateSold': sell_date})
+
+        return ts
+        
     def get_values(self, date):
         day_diff = (date - self.init_date).days
         vals = []

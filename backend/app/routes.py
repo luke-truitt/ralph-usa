@@ -108,7 +108,5 @@ def runBacktester():
   print('called route')
   json = request.get_json()
   print('json is', str(json))
-  result = mocks.runBacktester(json['startDate'], json['endDate'], int(json['portfolioValue']), json['model'])
-  return jsonify({})
-
-
+  result = mocks.runBacktester(json['startDate'], json['endDate'], int(json['portfolioValue']), json['model'], float(json['target_return']), json['closing_strategy'])
+  return jsonify(result)

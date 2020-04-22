@@ -87,7 +87,7 @@ export class BacktesterDialogComponent implements OnInit {
       }
     });
 
-    this.dialogRef.close({'startDate': this.startDate, 'endDate': this.endDate, 'portfolioValue': this.portfolioValue, 'model': modelId});
+    this.dialogRef.close({'startDate': this.startDate, 'endDate': this.endDate, 'portfolioValue': this.portfolioValue, 'model': modelId, 'target_return': this.targetReturn, 'closing_strategy': this.selectedClosingStrategy, 'name': this.fullName, 'retirementDate':this.retirementDate, 'birthDate':this.birthDate});
   }
 
   updateBirthDate($event){
@@ -121,6 +121,7 @@ export class BacktesterDialogComponent implements OnInit {
     this.inputError = false;
     this.selectedClosingStrategy = $event['value'];
   }
+
   subtractDays(date:Date, days:number){
     let tempDate = new Date();
     tempDate.setTime(date.getTime() - (days*24*60*60*1000));

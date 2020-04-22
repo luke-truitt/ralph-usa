@@ -60,11 +60,17 @@ CREATE TABLE ModelCollections(
     ); '''
 
 create_table_query3 = '''
-CREATE TABLE TradingAlgorithm(
+CREATE TABLE TradingAlgorithms(
     tradingAlgorithmId uuid  NOT NULL,
     tickers VARCHAR NOT NULL,
+    features VARCHAR NOT NULL,
+    length BIGINT,
+    upperthreshold DECIMAL,
+    lowerthreshold DECIMAL,
+    period BIGINT,
     modelCollectionIds VARCHAR NOT NULL,
     votingType VARCHAR(10),
+    title VARCHAR,
     PRIMARY KEY (tradingAlgorithmId)
     ); '''
 
