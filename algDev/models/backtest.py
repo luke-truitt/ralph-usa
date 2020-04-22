@@ -18,7 +18,7 @@ class Backtest():
         self.start_date = start_date
         self.asset_strategy = asset_strategy
         self.trading_algorithm = trading_algorithm
-
+        
         self.portfolio = Portfolio(self.value, self.today, self.trading_algorithm, self.asset_strategy, verbose)
 
     def step(self, verbose=False):

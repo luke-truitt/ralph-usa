@@ -3,9 +3,12 @@ from algDev.models.finance import Finance
 
 class AssetAllocation:
 
-    def __init__(self, upper_threshold, lower_threshold):
+    def __init__(self, upper_threshold, lower_threshold, target_return=0, rf=0):
         self.upper_threshold = upper_threshold
         self.lower_threshold = lower_threshold
+
+        self.target_return = target_return
+        self.rf = rf
 
     def get_exp_ret(self, positions, predictions):
         expected_returns = []
@@ -75,9 +78,5 @@ class AssetAllocation:
     def get_cov_arr(self, date, positions):
         DC_arr = self.get_DC_arr(date, positions)
         cov_arr = np.cov(DC_arr)
-        #for i in range(0, len(self.positions)):
-        #    eq1 = self.positions[i].eq
-        #    for j in range(0, len(self.positions)):
-        #        eq2 = self.positions[j].eq
-        #        self.cov_arr[i, j] = Finance.covariance(eq1, eq2, init_date, days, start, stop)
+
         return cov_arr

@@ -80,7 +80,7 @@ class Portfolio:
 
         for i, pos in enumerate(self.positions):
         
-            self.free_cash[date + datetime.timedelta(days=1)] += pos.handle_closings(self.trading_algorithm.params, date, verbose)
+            self.free_cash[date + datetime.timedelta(days=1)] += pos.handle_closings(self.trading_algorithm.params, date, self.asset_strategy.close_type, verbose)
         
     def date_ob(self, date, verbose=False):
 
