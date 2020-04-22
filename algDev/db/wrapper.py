@@ -41,10 +41,10 @@ def createModel(model):
     modelId = uuid.uuid4()
     modelData = pickle.dumps(model.model)
     modelTitle = model.title
-    modelMetrics = str(model.metrics)
+    modelMetrics = str(model.metrics).replace("'","\"")
 
-    sql = "INSERT INTO models (modelId, modelbinary, title, metrics) VALUES (%s)"
-    cursor.execute(sql, (modelId, psycopg2.BINARY(modelData), modelTitle, modelMetrics))
+    sql = "INSERT INTO models (modelId, modelbinary, title, metrics) VALUES ('{}',{},'{}','{}')"
+    cursor.execute(sql.format(modelId, psycopg2.Binary(modelData), modelTitle, modelMetrics))
 
     return modelId
 
@@ -58,7 +58,8 @@ def createModelCollection(modelCollection):
     modelIds = []
     for model in modelCollection.models:
         modelId = createModel(model)
-        modelIds.append(modelId)
+        modelIds.append(str(modelId))
+
     modelIds = ','.join(modelIds)
     
     period = int(modelCollection.params['period'])
@@ -66,12 +67,14 @@ def createModelCollection(modelCollection):
     upper_threshold = float(modelCollection.params['upper_threshold'])
     lower_threshold = float(modelCollection.params['lower_threshold'])
     title = input("Enter name for modelCollection ")
+    if title=='':
+        title='default'
     features = ','.join(modelCollection.features)
     if title=='':
         title = str(modelCollection.features)
     title = modelCollection.type + ' - ' + title
-    sql = "INSERT INTO Models (modelCollectionId, ticker, modelIds, length, upperthreshold, lowerthreshold, period, title, features) VALUES (%s)"
-    cursor.execute(sql, (id, ticker, modelIds, length, upper_threshold, lower_threshold, period, title, features))
+    sql = "INSERT INTO ModelCollections (modelCollectionId, ticker, modelIds, length, upperthreshold, lowerthreshold, period, title, features) VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}')"
+    cursor.execute(sql.format(id, ticker, modelIds, length, upper_threshold, lower_threshold, period, title, features))
 
     return id
 
@@ -89,14 +92,23 @@ def createTradingAlgorithm(tradingAlgorithm):
     for model in tradingAlgorithm.models:
 
         modelCollectionId = createModelCollection(model)
-        modelIds.append(modelCollectionId)
+        modelIds.append(str(modelCollectionId))
+    
+    
+    features = ','.join(tradingAlgorithm.features)
+    length = tradingAlgorithm.params['length']
+    upperthreshold = tradingAlgorithm.params['upper_threshold']
+    lowerthreshold = tradingAlgorithm.params['lower_threshold']
+    period = tradingAlgorithm.params['period']
 
     modelIds = ','.join(modelIds)
 
     votingType = tradingAlgorithm.voter.voting_type
-
-    sql = "INSERT INTO Models (tradingAlgorithmId, tickers, modelCollectionIds, votingType=) VALUES (%s)"
-    cursor.execute(sql, (id, tickers, modelIds, votingType))
+    title = input("Trading Algorithm Name")
+    if title=='':
+        title='Default'
+    sql = "INSERT INTO TradingAlgorithms (tradingAlgorithmId, tickers, features, length, upperthreshold, lowerthreshold, period, modelCollectionIds, votingType, title) VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')"
+    cursor.execute(sql.format(id, tickers, features, length, upperthreshold, lowerthreshold, period, modelIds, votingType, title))
 
     return id
 
@@ -128,10 +140,10 @@ def getTradingAlgorithm(tradingAlgId):
     conn.autocommit = True
     cursor = conn.cursor()
 
-    query = "SELECT * FROM TradingAlgorithm WHERE tradingAlgorithmId = '{}'"
+    query = "SELECT * FROM TradingAlgorithms WHERE tradingAlgorithmId = '{}'"
     cursor.execute(query.format(tradingAlgId))
-    result = cursor.fetchall()
-
+    result = cursor.fetchone()
+    
     return result
 
 def loadModelCollection(modelCollId):
@@ -140,10 +152,10 @@ def loadModelCollection(modelCollId):
     conn.autocommit = True
     cursor = conn.cursor()
 
-    query = "SELECT * FROM ModelConnections WHERE modelCollectionId = '{}'"
+    query = "SELECT * FROM ModelCollections WHERE modelCollectionId = '{}'"
     cursor.execute(query.format(modelCollId))
-    result = cursor.fetchall()
-
+    result = cursor.fetchone()
+    
     return result
 
 def getFirstDate():
@@ -155,7 +167,6 @@ def getFirstDate():
     cursor.execute(getDateStatement)
     firstDate = cursor.fetchone() # un-nest from list of tuples
     firstDate = firstDate[0]
-    print('firstDate', firstDate)
 
     return firstDate
 
@@ -168,11 +179,10 @@ def getMostRecentDate():
     cursor.execute(getDateStatement)
     lastDate = cursor.fetchone() # un-nest from list of tuples
     lastDate = lastDate[0]
-    print('lastDate', lastDate)
 
     return lastDate
 
-def getTradingAlgorithm():
+def getTradingAlgorithms():
     conn = psycopg2.connect(host="localhost",database="postgres", user=credentials.username, password=credentials.password, port=credentials.port)
     conn.autocommit = True
     cursor = conn.cursor()
@@ -181,3 +191,14 @@ def getTradingAlgorithm():
     cursor.execute(query)
     result = cursor.fetchall()
     return result
+
+def getModelCollections():
+    conn = psycopg2.connect(host="localhost",database="postgres", user=credentials.username, password=credentials.password, port=credentials.port)
+    conn.autocommit = True
+    cursor = conn.cursor()
+
+    query = "SELECT * FROM ModelCollections"
+    cursor.execute(query)
+    result = cursor.fetchall()
+    return result
+
