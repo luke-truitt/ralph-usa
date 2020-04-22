@@ -25,14 +25,11 @@ export class BacktesterDialogComponent implements OnInit {
   ];
 
   selectedClosingStrategy:string;
-
   startDate:Date;
   endDate:Date;
   portfolioValue:number;
 
-  models:any[] = [
-    {'name': 'Model 1', 'parameters':[{'name': 'testParam1', 'value': 69}, {'name': 'testParam2', 'value': 420}]},
-    {'name': 'Model 2', 'parameters':[{'name': 'testParam3', 'value': 4}, {'name': 'testParam4', 'value': "ass"}]}];
+  models:any[];
 
   selectedModel:string;
 
@@ -42,9 +39,9 @@ export class BacktesterDialogComponent implements OnInit {
   maxStartDate:Date;
   minEndDate:Date;
   maxEndDate:Date;
-  
-  // start date, end date, portfolio values, a trading algorithm (but you'll need to find a nice way to display the 
-  // possible trading algorithms i.e. show all the parameters in them so they know) and then what other things you want to plot 
+
+  // start date, end date, portfolio values, a trading algorithm (but you'll need to find a nice way to display the
+  // possible trading algorithms i.e. show all the parameters in them so they know) and then what other things you want to plot
   // (SNP, Oil, a different portfolio)
 
   constructor(private dataService:DataService, public dialogRef: MatDialogRef<BacktesterDialogComponent>, @Inject(MAT_DIALOG_DATA) private data) { }
@@ -52,16 +49,19 @@ export class BacktesterDialogComponent implements OnInit {
   ngOnInit() {
     this.minStartDate = new Date(this.data['firstDate'])
     this.maxEndDate = new Date(this.data['endDate']);
+    this.models = this.data['models']
     this.maxStartDate = this.subtractDays(this.maxEndDate, 1);
 
     // eventually move this to backend
     this.modelParamsToStrings();
   }
   modelParamsToStrings() {
+    let paramsStrings = [];
     this.models.forEach(element => {
+
       let paramsString = ''
       element['parameters'].forEach(item => {
-        paramsString = paramsString + item['name'] + ': ' + item['value'] + ', '
+        paramsString = paramsString + item['name'] + ': ' + item['value']  + '    |    '
       })
       element['paramsString'] = paramsString.substr(0,paramsString.length-2);
     });
@@ -74,13 +74,20 @@ export class BacktesterDialogComponent implements OnInit {
   onSubmit():void{
     // validate data, throw error if necessary, otherwise return to other component
 
-    if(this.startDate == null || this.endDate == null || 
+    if(this.startDate == null || this.endDate == null ||
       this.startDate.getTime() >= this.endDate.getTime() || isNaN(Number(this.portfolioValue)) || this.selectedModel == null){
       this.inputError = true;
       return;
-    }    
+    }
+    let modelId = "";
 
-    this.dialogRef.close({'startDate': this.startDate, 'endDate': this.endDate, 'portfolioValue': this.portfolioValue, 'model': this.selectedModel})
+    this.models.forEach( model => {
+      if(model['name'] == this.selectedModel){
+        modelId = model['id'];
+      }
+    });
+
+    this.dialogRef.close({'startDate': this.startDate, 'endDate': this.endDate, 'portfolioValue': this.portfolioValue, 'model': modelId});
   }
 
   updateBirthDate($event){
@@ -92,6 +99,7 @@ export class BacktesterDialogComponent implements OnInit {
     this.inputError = false;
     this.retirementDate = new Date($event['value']);
   }
+
 
   updateStartDate($event){
     this.inputError = false;
@@ -113,11 +121,10 @@ export class BacktesterDialogComponent implements OnInit {
     this.inputError = false;
     this.selectedClosingStrategy = $event['value'];
   }
-
-  subtractDays(date:Date, days:number){ 
-    let tempDate = new Date(); 
-    tempDate.setTime(date.getTime() - (days*24*60*60*1000));  
-    return tempDate;  
-} 
+  subtractDays(date:Date, days:number){
+    let tempDate = new Date();
+    tempDate.setTime(date.getTime() - (days*24*60*60*1000));
+    return tempDate;
+}
 
 }

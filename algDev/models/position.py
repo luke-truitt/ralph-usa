@@ -97,8 +97,6 @@ class Position:
                     print("Sold at: ", self.eq.get_price(today, 'c'))
                 cash += trade.num_shares * self.eq.get_price(today, 'c', verbose)
                 self.trades[i] = trade.sell(today, verbose)
-<<<<<<< HEAD
-=======
                 continue
             upper_limit_price = self.eq.get_price(pur_date, 'o', verbose) * (1 + upper_limit)
             
@@ -117,7 +115,6 @@ class Position:
                     print("Sold at: ", self.eq.get_price(today, 'l', verbose))
                 cash += trade.num_shares * lower_limit_price
                 self.trades[i] = trade.sell(today, verbose)
->>>>>>> 752566d8adc061852192b59b904e9c9dd31db13d
 
         if verbose:
             print("Trades:",self.trades)

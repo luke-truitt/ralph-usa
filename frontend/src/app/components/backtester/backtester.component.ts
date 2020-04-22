@@ -53,7 +53,7 @@ export class BacktesterComponent implements OnInit {
       this.isLoading = false;
       console.log('opened');
       const dialogRef = this.dialog.open(BacktesterDialogComponent, {
-        width: '350px',
+        width: '250px',
         hasBackdrop:false,
         data: result
       });
@@ -73,10 +73,6 @@ export class BacktesterComponent implements OnInit {
             this.positions = result['positions'];
             this.performanceStats =  result['stats'];
             this.portfolioValues = result['portfolioValues'];
-
-            // currently mocked, but eventually get this from the backend
-
-
           })
         }
         else{
