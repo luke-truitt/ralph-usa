@@ -13,7 +13,7 @@
       <input matInput (dateInput)="updateBirthDate($event)" [matDatepicker]="picker1">
       <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
       <mat-datepicker #picker1></mat-datepicker>
-  
+
     </mat-form-field>
 
     <mat-form-field>
@@ -21,18 +21,18 @@
       <input matInput (dateInput)="updateRetireDate($event)" [matDatepicker]="picker2">
       <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
       <mat-datepicker #picker2></mat-datepicker>
-  
+
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Target Annual Return (Enter 0 if you would like most efficient portfolio)</mat-label>
-      <input matInput [(ngModel)]="targetReturn">
+      <mat-label>Target Annual Return</mat-label>
+      <input matInput [(ngModel)]="targetReturn" placeholder="(Enter 0 if you would like most efficient portfolio)">
     </mat-form-field>
 
-    
+
     <mat-form-field>
       <mat-label>Investment Closing Strategy</mat-label>
-      <mat-select (selectionChange)=updateCloseTyp($event)>
+      <mat-select (selectionChange)=updateCloseType($event)>
         <mat-option style="background-color: #222222; color:#DDDDDD" *ngFor="let closingStrategy of closingStrategy" [value]="closingStrategy.viewValue">
           {{closingStrategy.viewValue}}
         </mat-option>
@@ -41,14 +41,14 @@
 
       </div>
       </mat-form-field>
-      
+
 
     <mat-form-field>
         <mat-label>Start Date</mat-label>
         <input matInput (dateChange)="updateStartDate($event)" [min]="minStartDate" [max]="maxStartDate" [matDatepicker]="picker3">
         <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
         <mat-datepicker #picker3></mat-datepicker>
-    
+
     </mat-form-field>
 
     <mat-form-field>
@@ -66,7 +66,7 @@
     <mat-form-field>
         <mat-label>Model/Trading Strategy</mat-label>
         <mat-select (selectionChange)=updateModel($event)>
-          <mat-option style="background-color: #222222; color:#DDDDDD" *ngFor="let model of models" [value]="model.name" 
+          <mat-option style="background-color: #222222; color:#DDDDDD" *ngFor="let model of models" [value]="model.name"
           matTooltip="{{model.paramsString}}" matTooltipPosition="after">
             {{model.name}}
           </mat-option>

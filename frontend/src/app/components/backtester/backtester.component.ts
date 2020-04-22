@@ -53,7 +53,7 @@ export class BacktesterComponent implements OnInit {
       this.isLoading = false;
       console.log('opened');
       const dialogRef = this.dialog.open(BacktesterDialogComponent, {
-        width: '250px',
+        width: '300px',
         hasBackdrop:false,
         data: result
       });
@@ -65,7 +65,7 @@ export class BacktesterComponent implements OnInit {
           this.maxStartDate = new Date(this.endDate.getTime() - 24*60*60*1000);
           this.showButton = false;
           this.isLoading = true;
-    
+
           this.dataService.runBacktester(params).subscribe(result => {
             this.isLoading = false;
             this.testerComplete = true;
@@ -82,7 +82,7 @@ export class BacktesterComponent implements OnInit {
       });
 
     });
-    
+
   }
   onPositionsChange($event){
     console.log('positionsChangeEvent', $event);
@@ -96,7 +96,7 @@ export class BacktesterComponent implements OnInit {
     console.log('update start date event', $event)
     this.minVizDate = new Date($event['value']);
     this.minEndDate = new Date(this.minVizDate.getTime() + (24*60*60*1000));
-    this.updateRendered();  
+    this.updateRendered();
 
   }
 
@@ -131,10 +131,10 @@ export class BacktesterComponent implements OnInit {
     lineXaxisLabel: string = 'Days Since Last Month';
     lineYaxisLabel: string = 'Value';
     lineTimeline: boolean = false;
-  
-      
+
+
     view: any[] = [450, 300];
-    
+
     lineColorScheme = {
       domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
     };
@@ -142,14 +142,14 @@ export class BacktesterComponent implements OnInit {
     lineOnSelect(data): void {
       // console.log('Item clicked', JSON.parse(JSON.stringify(data)));
     }
-  
+
     lineOnActivate(data): void {
       // console.log('Activate', JSON.parse(JSON.stringify(data)));
     }
-  
+
     lineOnDeactivate(data): void {
       // console.log('Deactivate', JSON.parse(JSON.stringify(data)));
     }
-  
+
 
 }
