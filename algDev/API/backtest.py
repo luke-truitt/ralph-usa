@@ -6,7 +6,7 @@ from algDev.models.asset_strategy import AssetStrategy, AssetAllocation
 import datetime
 
 def run_backtest(start_date, end_date, pf_value, tradingAlgorithmId, target_return, closing_strategy):
-    
+    print(closing_strategy)
     trading_algorithm = loadTradingAlgorithm(tradingAlgorithmId)
     aa = AssetAllocation(trading_algorithm.params['upper_threshold'], trading_algorithm.params['lower_threshold'], target_return=target_return)
     asset_strategy = AssetStrategy(aa, close_type=closing_strategy)

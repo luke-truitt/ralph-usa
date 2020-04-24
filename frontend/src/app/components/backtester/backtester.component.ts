@@ -27,17 +27,11 @@ export class BacktesterComponent implements OnInit {
   positions:any[];
   performanceStats:any[];
 
-  birthDate:Date;
-  retirementDate:Date;
-  targetReturn:number;
-  closingStrategy:string;
-  fullName:string;
-
   selectedPositions:any[];
   minVizDate:Date = new Date('2018-01-01');
   maxVizDate:Date = new Date();
 
-  portfolioValues:any[];
+  graphData:any[];
 
   renderedTrades:any[] = [];
 
@@ -59,7 +53,7 @@ export class BacktesterComponent implements OnInit {
       this.isLoading = false;
       console.log('opened');
       const dialogRef = this.dialog.open(BacktesterDialogComponent, {
-        width: '300px',
+        width: '250px',
         hasBackdrop:false,
         data: result
       });
@@ -68,33 +62,27 @@ export class BacktesterComponent implements OnInit {
         if(params){
           this.startDate = params['startDate'];
           this.endDate = params['endDate'];
-
-          this.fullName = params['name'];
-          this.retirementDate = params['retirementDate']
-          this.birthDate = params['birthDate']
-          this.targetReturn = params['target_return']
-          this.closingStrategy = params['closing_strategy']
-
           this.maxStartDate = new Date(this.endDate.getTime() - 24*60*60*1000);
           this.showButton = false;
           this.isLoading = true;
-
+    
           this.dataService.runBacktester(params).subscribe(result => {
             this.isLoading = false;
             this.testerComplete = true;
 
             this.positions = result['positions'];
             this.performanceStats =  result['stats'];
-            this.portfolioValues = result['portfolioValues'];
-          });
-        } else {
+            this.graphData = result['graphData'];
+          })
+        }
+        else{
           this.showButton = true;
         }
 
       });
 
     });
-
+    
   }
   onPositionsChange($event){
     console.log('positionsChangeEvent', $event);
@@ -108,7 +96,7 @@ export class BacktesterComponent implements OnInit {
     console.log('update start date event', $event)
     this.minVizDate = new Date($event['value']);
     this.minEndDate = new Date(this.minVizDate.getTime() + (24*60*60*1000));
-    this.updateRendered();
+    this.updateRendered();  
 
   }
 
@@ -143,10 +131,10 @@ export class BacktesterComponent implements OnInit {
     lineXaxisLabel: string = 'Days Since Last Month';
     lineYaxisLabel: string = 'Value';
     lineTimeline: boolean = false;
-
-
+  
+      
     view: any[] = [450, 300];
-
+    
     lineColorScheme = {
       domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
     };
@@ -154,14 +142,14 @@ export class BacktesterComponent implements OnInit {
     lineOnSelect(data): void {
       // console.log('Item clicked', JSON.parse(JSON.stringify(data)));
     }
-
+  
     lineOnActivate(data): void {
       // console.log('Activate', JSON.parse(JSON.stringify(data)));
     }
-
+  
     lineOnDeactivate(data): void {
       // console.log('Deactivate', JSON.parse(JSON.stringify(data)));
     }
-
+  
 
 }

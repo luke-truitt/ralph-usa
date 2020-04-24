@@ -1,5 +1,5 @@
 <div class="startButton" *ngIf="showButton">
-    <button mat-button (click)="openDialog()" class="backtesterButton"><h2>Start Backtest</h2></button>
+    <button mat-button (click)="openDialog()" class="backtesterButton"><h2>Start backtest</h2></button>
 </div>
 
 <div class="loading" *ngIf="isLoading">
@@ -72,7 +72,7 @@
     <div class="statistics">
 
         <div class="graph">
-            <h2>Portfolio Value</h2>
+            <h2>Portfolio Analysis</h2>
             <div class="chart">
                 <ngx-charts-line-chart
                 [view]="view"
@@ -86,7 +86,7 @@
                 [xAxisLabel]="lineXaxisLabel"
                 [yAxisLabel]="lineYaxisLabel"
                 [timeline]="lineTimeline"
-                [results]="portfolioValues"
+                [results]="graphData"
                 (select)="lineOnSelect($event)"
                 (activate)="lineOnActivate($event)"
                 (deactivate)="lineOnDeactivate($event)"

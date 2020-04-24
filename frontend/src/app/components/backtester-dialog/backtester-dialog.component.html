@@ -33,7 +33,7 @@
     <mat-form-field>
       <mat-label>Investment Closing Strategy</mat-label>
       <mat-select (selectionChange)=updateCloseType($event)>
-        <mat-option style="background-color: #222222; color:#DDDDDD" *ngFor="let closingStrategy of closingStrategy" [value]="closingStrategy.viewValue">
+        <mat-option style="background-color: #222222; color:#DDDDDD" *ngFor="let closingStrategy of closingStrategy" [value]="closingStrategy.value">
           {{closingStrategy.viewValue}}
         </mat-option>
       </mat-select>
