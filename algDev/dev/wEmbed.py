@@ -12,8 +12,8 @@ Batch_Norm = layers.BatchNormalization()(LSTM)
 
 # for text
 
-# wvmodel = shorttext.utils.load_word2vec_model('/Users/phoebeloveklett/Downloads/GoogleNews-vectors-negative300.bin.gz')
-wvmodel = KeyedVectors.load_word2vec_format('/Users/phoebeloveklett/Downloads/GoogleNews-vectors-negative300.bin.gz',
+# wvmodel = shorttext.utils.load_word2vec_model('/GoogleNews-vectors-negative300.bin.gz')
+wvmodel = KeyedVectors.load_word2vec_format('/GoogleNews-vectors-negative300.bin.gz',
                                             binary=True)
 # index all input text
 word_vectors = wvmodel.wv

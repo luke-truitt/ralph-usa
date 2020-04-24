@@ -1,13 +1,13 @@
 from setuptools import setup
 
 setup(
-        name='FML',
+        name='RUSA',
         version='0.1.0',
         packages=['models', 'indicators'],
         package_dir={'': 'algDev'},
-        url='https://dukeaml.com/',
+        url='https://ralphusa.com',
         license='',
         author='',
         author_email='',
-        description='Financial Machine Learning'
+        description='Financial Indicators'
 )
