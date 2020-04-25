@@ -64,15 +64,15 @@ class AssetAllocation:
         for i, alloc in enumerate(w_d):
             total += alloc
 
-        if target_return == 0:
-            weightings = w_d
-        else:
-            lam = np.divide(C-np.dot(B, target_return), delta)
-            gam =  np.divide(np.dot(A, target_return)-B, delta)
-            weightings = np.dot(np.dot(lam, A), w_g) + np.dot(np.dot(gam, B), w_d) 
+        # if self.target_return == 0:
+        weightings = w_d
+        # else:
+        #     lam = np.divide(C-np.dot(B, self.target_return), delta)
+        #     gam =  np.divide(np.dot(A, self.target_return)-B, delta)
+        #     weightings = np.dot(np.dot(lam, A), w_g) + np.dot(np.dot(gam, B), w_d) 
         
-        ## Allocate half of free cash
-        allocations = weightings/(total * 2)
+        ## Allocate one third of free cash
+        allocations = weightings/(total * 3)
 
         return allocations
 

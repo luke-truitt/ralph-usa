@@ -25,18 +25,31 @@ export class BacktesterComponent implements OnInit {
   isLoading:boolean;
   testerComplete:boolean;
   positions:any[];
+  predictions:any[];
   performanceStats:any[];
 
+  birthDate:Date;
+  yearsToRetirement:number;
+  retirementAge:number
+  retirementDate:Date;
+  targetReturn:number;
+  closingStrategy:string;
+  fullName:string;
+  expectedReturn:number;
+  expectedPFValue:number;
+  initialPFValue:number;
   selectedPositions:any[];
   minVizDate:Date = new Date('2018-01-01');
   maxVizDate:Date = new Date();
 
+  earlyDate:Date = new Date('1970-01-01');
   graphData:any[];
 
   renderedTrades:any[] = [];
+  renderedPredictions:any[] = [];
 
   displayedColumns: string[] = ['datePurchased', 'numShares', 'dateSold'];
-
+  predColumns: string[] = ['date', 'prediction', 'confidence'];
 
   constructor(private dataService:DataService, public dialog:MatDialog) { }
 
@@ -53,7 +66,7 @@ export class BacktesterComponent implements OnInit {
       this.isLoading = false;
       console.log('opened');
       const dialogRef = this.dialog.open(BacktesterDialogComponent, {
-        width: '250px',
+        width: '300px',
         hasBackdrop:false,
         data: result
       });
@@ -65,15 +78,29 @@ export class BacktesterComponent implements OnInit {
           this.maxStartDate = new Date(this.endDate.getTime() - 24*60*60*1000);
           this.showButton = false;
           this.isLoading = true;
-    
+
+          this.fullName = params['name'];
+          this.retirementDate = params['retirementDate']
+          this.initialPFValue = Number(params['portfolioValue'])
+          this.yearsToRetirement = this.retirementDate.getFullYear() - (new Date()).getFullYear();
+          this.birthDate = params['birthDate']
+          this.retirementAge = this.retirementDate.getFullYear() - this.birthDate.getFullYear();
+          this.targetReturn = params['target_return']
+          this.closingStrategy = params['closing_strategy']
+
           this.dataService.runBacktester(params).subscribe(result => {
             this.isLoading = false;
             this.testerComplete = true;
 
-            this.positions = result['positions'];
+            this.positions = this.formatPositions(result['positions']);
+            this.predictions = this.formatPredictions(result['predictions']);
             this.performanceStats =  result['stats'];
+            this.expectedReturn = this.performanceStats[0]['value'];
+            this.expectedPFValue = Math.exp((this.expectedReturn)*this.yearsToRetirement)*this.initialPFValue
             this.graphData = result['graphData'];
-          })
+            console.log(this.initialPFValue)
+            console.log(this.expectedPFValue)
+          });
         }
         else{
           this.showButton = true;
@@ -82,8 +109,44 @@ export class BacktesterComponent implements OnInit {
       });
 
     });
-    
+
   }
+  formatPositions(positions){
+      let betterPoss = [];
+      positions.forEach(pos => {
+        let formattedPos = {'ticker': pos['ticker'], 'trades': this.formatTrades(pos['trades'])};
+        betterPoss.push(formattedPos);
+      });
+      return betterPoss;
+  }
+
+    formatTrades(trades) {
+      let betterTrades = []
+      trades.forEach(trade => {
+        console.log(trade);
+        let formattedTrade = {'datePurchased': new Date(trade['datePurchased']), 'dateSold': new Date(trade['dateSold']), 'numShares': trade['numShares']}
+        betterTrades.push(formattedTrade)
+      })
+      return betterTrades
+    }
+
+    formatPredictions(predictions){
+      let betterPreds = [];
+      predictions.forEach(pos => {
+        let formattedPred = {'ticker': pos['ticker'], 'predictions': this.formatPreds(pos['predictions'])};
+        betterPreds.push(formattedPred);
+      });
+      return betterPreds;
+  }
+
+    formatPreds(preds) {
+      let betterPreds = [];
+      preds.forEach(pred => {
+        let formattedPred = {'date': new Date(pred['date']), 'prediction': pred['prediction'], 'confidence': pred['confidence']};
+        betterPreds.push(formattedPred);
+      })
+      return betterPreds
+    }
   onPositionsChange($event){
     console.log('positionsChangeEvent', $event);
     this.selectedPositions = $event['value'];
@@ -91,12 +154,12 @@ export class BacktesterComponent implements OnInit {
     // for the selected positions, go through trades and render ones that are between minVizDate and maxVisDate
   }
 
-  updateStartDate($event){
+  updateStartDate($event) {
     // update rendered trades here too
     console.log('update start date event', $event)
     this.minVizDate = new Date($event['value']);
     this.minEndDate = new Date(this.minVizDate.getTime() + (24*60*60*1000));
-    this.updateRendered();  
+    this.updateRendered();
 
   }
 
@@ -108,16 +171,25 @@ export class BacktesterComponent implements OnInit {
   }
 
   updateRendered(){
-    this.renderedTrades = []
-
+    this.renderedTrades = [];
+    this.renderedPredictions = [];
     this.positions.forEach(position => {
       console.log('current position is', position);
       if(this.selectedPositions.indexOf(position['ticker']) > -1){
-        console.log('currenty looking at', position['ticker']);
-        let tempObj = {'name': position['ticker'], trades: position['trades'].filter(trade => (trade['datePurchased'] >= this.minVizDate && trade['datePurchased'] <= this.maxVizDate))}
+        console.log(position);
+        let tempObj = {'name': position['ticker'], 'trades': position['trades'].filter(trade => (trade['datePurchased'] >= this.minVizDate && trade['datePurchased'] <= this.maxVizDate))}
         this.renderedTrades.push(tempObj);
       }
-    })
+    });
+    this.predictions.forEach(prediction => {
+      if(this.selectedPositions.indexOf(prediction['ticker']) > -1){
+        console.log(prediction);
+        let tempObj = {'name': prediction['ticker'], 'predictions': prediction['predictions'].filter(pred => (pred['date'] >= this.minVizDate && pred['date'] <= this.maxVizDate))};
+        this.renderedPredictions.push(tempObj);
+      }
+    });
+    console.log(this.renderedTrades);
+    console.log(this.renderedPredictions);
   }
 
     // GRAPH FORMAT OPTIONS
@@ -131,10 +203,10 @@ export class BacktesterComponent implements OnInit {
     lineXaxisLabel: string = 'Days Since Last Month';
     lineYaxisLabel: string = 'Value';
     lineTimeline: boolean = false;
-  
-      
+
+
     view: any[] = [450, 300];
-    
+
     lineColorScheme = {
       domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
     };
@@ -142,14 +214,14 @@ export class BacktesterComponent implements OnInit {
     lineOnSelect(data): void {
       // console.log('Item clicked', JSON.parse(JSON.stringify(data)));
     }
-  
+
     lineOnActivate(data): void {
       // console.log('Activate', JSON.parse(JSON.stringify(data)));
     }
-  
+
     lineOnDeactivate(data): void {
       // console.log('Deactivate', JSON.parse(JSON.stringify(data)));
     }
-  
+
 
 }

@@ -99,3 +99,6 @@ def getModels(ticker):
     models = db_wrapper.loadModelCollections(ticker)
 
     return models
+
+# def loadModelResult(modelCollectionId):
+

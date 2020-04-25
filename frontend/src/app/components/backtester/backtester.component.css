@@ -27,7 +27,7 @@
 ::ng-deep.mat-form-field-underline {
     /*change color of underline*/
     background-color: #7FC6B8 !important;
-   } 
+   }
 
 button:hover{
     background-color: #7FC6B8;
@@ -43,7 +43,7 @@ button:hover{
 
 .tradeViewer{
     float: left;
-    display:block; 
+    display:block;
     text-align: center;
     width: 40%;
     margin-left: 5%;
@@ -77,11 +77,11 @@ h2 .graph{
     margin-left: 5%;
     padding-top: 5%;
     padding-bottom: 5%;
-    display: -webkit-box;   
-    display: -moz-box; 
-    display: -ms-flexbox;  
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
     display: -webkit-flex;
-    display: flex;  
+    display: flex;
     -webkit-justify-content: center;
     -moz-justify-content: center;
     justify-content: center;
@@ -98,13 +98,13 @@ h2 .graph{
 
 .statPanel{
     box-shadow: 0 0 15px #000000;
-    width: 80%;
+    width: 90%;
     margin-bottom: 5%;
-    display: -webkit-box;   
-    display: -moz-box; 
-    display: -ms-flexbox;  
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
     display: -webkit-flex;
-    display: flex;  
+    display: flex;
     -webkit-justify-content: center;
     -moz-justify-content: center;
     justify-content: center;
@@ -114,19 +114,18 @@ h2 .graph{
     -webkit-flex-wrap: wrap;
     -moz-flex-wrap: wrap;
     flex-wrap: wrap;
-    margin-left: 10%;
-    margin-right: 10%;
+    margin-left:5%;
     padding-top: 3%;
     padding-bottom: 3%;
 
 }
 
 .statsView{
-    display: -webkit-box;   
-    display: -moz-box; 
-    display: -ms-flexbox;  
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
     display: -webkit-flex;
-    display: flex;  
+    display: flex;
     -webkit-justify-content: center;
     -moz-justify-content: center;
     justify-content: center;
@@ -147,11 +146,11 @@ h2 .graph{
 
 
 
-::ng-deep .ngx-charts text { 
-    fill: #dddddd !important; 
+::ng-deep .ngx-charts text {
+    fill: #dddddd !important;
 }
-::ng-deep span .chart-legend .legend-label .legend-label-text .active :hover{ 
-    fill: #ffffff !important; 
+::ng-deep span .chart-legend .legend-label .legend-label-text .active :hover{
+    fill: #ffffff !important;
     background-color: #ffffff;
 }
 

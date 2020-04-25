@@ -90,6 +90,12 @@ export class BacktesterDialogComponent implements OnInit {
     this.dialogRef.close({'startDate': this.startDate, 'endDate': this.endDate, 'portfolioValue': this.portfolioValue, 'model': modelId, 'target_return': this.targetReturn, 'closing_strategy': this.selectedClosingStrategy, 'name': this.fullName, 'retirementDate':this.retirementDate, 'birthDate':this.birthDate});
   }
 
+  onDemo():void{
+    // Demo
+
+    this.dialogRef.close({'startDate': new Date('3/4/2019'), 'endDate': new Date('4/6/2019'), 'portfolioValue': 1000000, 'model': '6ae7528c-5f71-41ab-9c7f-139f1b3ff45e', 'target_return': 0.02, 'closing_strategy': 'threshold', 'name': 'Dr. Henry Pfister', 'retirementDate': new Date('10/26/2030'), 'birthDate': new Date('10/26/1970')});
+  }
+
   updateBirthDate($event){
     this.inputError = false;
     this.birthDate = new Date($event['value']);

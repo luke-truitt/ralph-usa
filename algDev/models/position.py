@@ -12,7 +12,7 @@ class Position:
     def get_trades_dictionary(self):
         ts = []
         for t in self.trades:
-            if t.sold:
+            if not t.sold:
                 sell_date = None
             else:
                 sell_date = t.date_sold
@@ -57,6 +57,8 @@ class Position:
         day_open = self.eq.get_price(date, 'o')
         
         num_shares = int(amt/day_open)
+        if num_shares == 0:
+            return amt
         total_purchased = num_shares * day_open
         left_over = amt - total_purchased
         if verbose:

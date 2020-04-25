@@ -6,16 +6,14 @@ import datetime
 
 def run_test():
 
-    pf_value = 1234
-    start_date = datetime.datetime(2020, 3, 4)
-    end_date = datetime.datetime(2020, 3, 6)
+    pf_value = 1000000
+    start_date = datetime.datetime(2019, 3, 4)
+    end_date = datetime.datetime(2019, 4, 6)
     ta_id = '19124e2f-65e3-4dbb-b9fc-462f6eb96406'
-
-    ta = loadTradingAlgorithm(ta_id)
-    print(ta.eqs[0].closes)
-    print(ta.models[0].accuracy)
-    print(ta.models[0].models[0].metrics)
-    aa = AssetAllocation(0.025, -0.15)
+    ta_id_demo = '6ae7528c-5f71-41ab-9c7f-139f1b3ff45e'
+    ta = loadTradingAlgorithm(ta_id_demo)
+    
+    aa = AssetAllocation(0.015, -0.15)
     a_s = AssetStrategy(aa)
     b = Backtest(ta, a_s, start_date, end_date, pf_value, True)
 
